@@ -7,9 +7,9 @@ type ProtectedProp = {
 };
 
 export function Protected({ children }: ProtectedProp) {
-    const { user } = useContext(AuthContext);
+    const { currentUser } = useContext(AuthContext);
 
-    if (!user) {
+    if (!currentUser) {
         return <Navigate to="/sign-in" replace />;
     } else {
         return children;

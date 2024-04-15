@@ -2,7 +2,7 @@ import { ReactNode, createContext, useEffect, useState } from 'react';
 import { userStateListener } from '../../features';
 import { User } from 'firebase/auth';
 
-export const AuthContext = createContext({});
+export const AuthContext = createContext();
 
 type AuthProvider = {
     children: ReactNode;

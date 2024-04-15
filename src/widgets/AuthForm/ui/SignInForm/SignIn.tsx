@@ -37,7 +37,7 @@ const SignIn = () => {
     const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
         try {
             await signIn(email, password);
-            navigate('/feed', { replace: true });
+            navigate('/feed');
         } catch (error) {
             console.log(error);
         }
