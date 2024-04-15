@@ -6,6 +6,8 @@ import { Form, useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useState } from 'react';
+import { signUp } from '../../../../features';
+import { useNavigate } from 'react-router-dom';
 
 const signUpSchema = yup.object().shape({
     userName: yup.string().required('Username is required'),
@@ -24,7 +26,6 @@ const SignUp = () => {
         handleSubmit,
         control,
         formState: { errors },
-        reset,
     } = useForm<Inputs>({
         defaultValues: {
             userName: '',
@@ -33,10 +34,14 @@ const SignUp = () => {
         },
         resolver: yupResolver(signUpSchema),
     });
-
-    const onSubmit: SubmitHandler<Inputs> = (data) => {
-        console.log(data);
-        reset();
+    const navigate = useNavigate();
+    const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
+        try {
+            await signUp(email, password);
+            navigate('/sign-in');
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     // Можно вынести в InputAdornments

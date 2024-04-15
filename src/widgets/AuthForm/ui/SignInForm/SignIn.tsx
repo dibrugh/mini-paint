@@ -6,7 +6,8 @@ import { Form, useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { signIn } from '../../../../features';
 
 const signInSchema = yup.object().shape({
     email: yup.string().email().required('Email is required'),
@@ -23,7 +24,6 @@ const SignIn = () => {
         handleSubmit,
         control,
         formState: { errors },
-        reset,
     } = useForm<Inputs>({
         defaultValues: {
             email: '',
@@ -32,9 +32,15 @@ const SignIn = () => {
         resolver: yupResolver(signInSchema),
     });
 
-    const onSubmit: SubmitHandler<Inputs> = (data) => {
-        console.log(data);
-        reset();
+    const navigate = useNavigate();
+
+    const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
+        try {
+            await signIn(email, password);
+            navigate('/feed', { replace: true });
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     // Можно вынести в InputAdornments
@@ -48,7 +54,6 @@ const SignIn = () => {
 
     return (
         <Container maxWidth="sm" component="main" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
-            {/* style normalizing */}
             <CssBaseline />
 
             <Box
