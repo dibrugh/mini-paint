@@ -1,21 +1,11 @@
-import { signOut } from '../../../features';
-// Нет navigate после signOut
+import { CssBaseline } from '@mui/material';
+import { Header } from '../../../widgets';
 
 const Main = () => {
     return (
         <>
-            <div>Main Page</div>
-            <button
-                onClick={async () => {
-                    try {
-                        signOut();
-                    } catch (error) {
-                        console.log(error.message);
-                    }
-                }}
-            >
-                Sign out
-            </button>
+            <Header />
+            <CssBaseline />
         </>
     );
 };

@@ -14,10 +14,12 @@ export const AuthProvider = ({ children }: AuthProvider) => {
 
     useEffect(() => {
         const unsubscribe = userStateListener((user) => {
+            setPending(false);
             if (user) {
                 setCurrentUser(user);
+            } else {
+                setCurrentUser(null);
             }
-            setPending(false);
         });
 
         return unsubscribe;

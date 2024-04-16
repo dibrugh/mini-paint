@@ -4,3 +4,4 @@ To-DO:
    1.1 Вынести общую логику из форм в BaseAuthForm, который будет использовать react-hook-form context и принимать input как children
 2. Вынести компоненты AuthForm в shared/ shared & feature
 3. Выносить типы
+4. Переписать Header на асинхронный select (import AsyncSelect from 'react-select/async')
