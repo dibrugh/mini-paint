@@ -2,7 +2,7 @@ import { ReactNode, createContext, useEffect, useState } from 'react';
 import { userStateListener } from '../../features';
 import { User } from 'firebase/auth';
 
-export const AuthContext = createContext();
+export const AuthContext = createContext<User | null>(null);
 
 type AuthProvider = {
     children: ReactNode;
@@ -27,5 +27,5 @@ export const AuthProvider = ({ children }: AuthProvider) => {
         return <>Loading...</>;
     }
 
-    return <AuthContext.Provider value={{ currentUser }}>{children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={currentUser}>{children}</AuthContext.Provider>;
 };

@@ -1,29 +1,33 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { Error, Main, SignIn, SignUp } from '../../pages';
-import { Protected } from './Protected';
+import { VerifyAuthorization } from './VerifyAuthorization';
 
 export const router = createBrowserRouter([
     {
         path: '/',
         element: (
-            <Protected>
+            <VerifyAuthorization>
                 <Main />
-            </Protected>
+            </VerifyAuthorization>
         ),
         errorElement: <Error />,
     },
     {
         path: '/feed',
         element: (
-            <Protected>
+            <VerifyAuthorization>
                 <Main />
-            </Protected>
+            </VerifyAuthorization>
         ),
         errorElement: <Error />,
     },
     {
         path: '/sign-in',
-        element: <SignIn />,
+        element: (
+            <VerifyAuthorization>
+                <SignIn />
+            </VerifyAuthorization>
+        ),
     },
     {
         path: '/sign-up',

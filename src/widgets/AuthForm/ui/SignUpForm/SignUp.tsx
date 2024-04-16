@@ -2,7 +2,7 @@ import { Box, Button, Container, CssBaseline, IconButton, InputAdornment, TextFi
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-import { Form, useForm, SubmitHandler, Controller } from 'react-hook-form';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useState } from 'react';
@@ -72,7 +72,7 @@ const SignUp = () => {
                     Sign up
                 </Typography>
 
-                <Form onSubmit={handleSubmit(onSubmit)} control={control}>
+                <form onSubmit={handleSubmit(onSubmit)}>
                     <Controller
                         name="email"
                         control={control}
@@ -143,7 +143,7 @@ const SignUp = () => {
                     <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
                         Sign In
                     </Button>
-                </Form>
+                </form>
             </Box>
         </Container>
     );
