@@ -1,3 +1,3 @@
-import { loginError } from './toasts';
+import { loginError, uploadSuccessful } from './toasts';
 
-export { loginError };
+export { loginError, uploadSuccessful };

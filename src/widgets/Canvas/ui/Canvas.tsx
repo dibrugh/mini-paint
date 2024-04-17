@@ -21,28 +21,29 @@ import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
 import BrushIcon from '@mui/icons-material/Brush';
 import { useEffect, useRef, useState } from 'react';
+import { getStorage, ref, uploadString } from 'firebase/storage';
+
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { uploadSuccessful } from '../../../shared/api';
 
 function Canvas() {
     const canvasRef = useRef(null);
     const contextRef = useRef(null);
-
     const [isDrawing, setIsDrawing] = useState(false);
     const [lineWidth, setLineWidth] = useState(1);
     const [selectedColor, setSelectedColor] = useState('#000000');
-    // Далее можно будет получать тулы по Primary тексту
     const [selectedTool, setSelectedTool] = useState('brush');
-
     const [prevMouseX, setprevMouseX] = useState(null);
     const [prevMouseY, setprevMouseY] = useState(null);
     const [snapshot, setSnapshot] = useState(null);
     const [figureIsFilled, setFigureIsFilled] = useState(false);
 
     useEffect(() => {
-        const canvas = canvasRef.current;
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
+        canvasRef.current.width = canvasRef.current.offsetWidth;
+        canvasRef.current.height = canvasRef.current.offsetHeight;
 
-        const context = canvas.getContext('2d', { willReadFrequently: true });
+        const context = canvasRef.current.getContext('2d', { willReadFrequently: true });
         contextRef.current = context;
 
         setDefaultCanvasBackground();
@@ -110,9 +111,17 @@ function Canvas() {
         contextRef.current.fillStyle = selectedColor;
     };
 
+    // Saving
+    const storage = getStorage();
     const saveImage = () => {
         const img = canvasRef.current.toDataURL();
-        console.log(img);
+        const imageName = `${Date.now()}.jpg`;
+        /* const imageRef = ref(storage, `images/${imageName}`); */
+        const storageRef = ref(storage, `/images/${imageName}`);
+        uploadString(storageRef, img, 'data_url').then(() => {
+            uploadSuccessful();
+            console.log('Succesfully uploaded a data_url string!');
+        });
     };
 
     return (
@@ -199,6 +208,7 @@ function Canvas() {
                     />
                 </Grid>
             </Grid>
+            <ToastContainer />
         </Container>
     );
 }

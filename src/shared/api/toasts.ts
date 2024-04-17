@@ -13,10 +13,10 @@ export const loginError = () => {
     });
 };
 
-/* export const loginSuccessful = () => {
-    toast.success('Succesfull', {
+export const uploadSuccessful = () => {
+    toast.success('Succesfull upload', {
         position: 'top-left',
-        autoClose: 5000,
+        autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -25,4 +25,3 @@ export const loginError = () => {
         theme: 'light',
     });
 };
- */
