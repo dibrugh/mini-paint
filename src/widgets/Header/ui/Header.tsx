@@ -95,7 +95,11 @@ export default function Header() {
                                 signOut();
                                 navigate('/sign-in');
                             } catch (error) {
-                                console.log(error.message);
+                                if (error instanceof Error) {
+                                    console.log((error as Error).message);
+                                } else {
+                                    console.log('An unknown error occurred');
+                                }
                             }
                         }}
                     >

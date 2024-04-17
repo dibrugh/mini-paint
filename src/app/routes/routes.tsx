@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { Error, Main, SignIn, SignUp } from '../../pages';
+import { Editor, Error, Main, SignIn, SignUp } from '../../pages';
 import { VerifyAuthorization } from './VerifyAuthorization';
 
 export const router = createBrowserRouter([
@@ -17,6 +17,15 @@ export const router = createBrowserRouter([
         element: (
             <VerifyAuthorization>
                 <Main />
+            </VerifyAuthorization>
+        ),
+        errorElement: <Error />,
+    },
+    {
+        path: '/editor',
+        element: (
+            <VerifyAuthorization>
+                <Editor />
             </VerifyAuthorization>
         ),
         errorElement: <Error />,
