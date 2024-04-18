@@ -8,6 +8,8 @@ import * as yup from 'yup';
 import { useState } from 'react';
 import { signUp } from '../../../../features';
 import { useNavigate } from 'react-router-dom';
+import { updateProfile } from 'firebase/auth';
+import { auth } from '../../../../shared/config/firebaseConfig';
 
 const signUpSchema = yup.object().shape({
     userName: yup.string().required('Username is required'),
@@ -35,9 +37,13 @@ const SignUp = () => {
         resolver: yupResolver(signUpSchema),
     });
     const navigate = useNavigate();
-    const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
+    const onSubmit: SubmitHandler<Inputs> = async ({ email, password, userName }) => {
         try {
             await signUp(email, password);
+            auth.currentUser &&
+                (await updateProfile(auth.currentUser, {
+                    displayName: userName,
+                }));
             navigate('/sign-in');
         } catch (error) {
             console.log(error);

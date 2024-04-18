@@ -1,10 +1,13 @@
 import { AccountCircle } from '@mui/icons-material';
+import PaletteIcon from '@mui/icons-material/Palette';
+import HomeIcon from '@mui/icons-material/Home';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { AppBar, Box, Button, IconButton, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
 import { useState } from 'react';
 import Select, { StylesConfig } from 'react-select';
 import { signOut } from '../../../features';
 import { useNavigate } from 'react-router-dom';
+import { getAuth } from 'firebase/auth';
 
 const mockOptions = [
     { label: 'User1', value: 'User1' },
@@ -23,6 +26,14 @@ export default function Header() {
 
     const handleClose = () => {
         setAnchorEl(null);
+    };
+
+    const redirectToEditor = () => {
+        navigate('/editor');
+    };
+
+    const redirectToFeed = () => {
+        navigate('/feed');
     };
 
     const customStyles: StylesConfig = {
@@ -55,9 +66,32 @@ export default function Header() {
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
                 <Toolbar sx={{ justifyContent: 'flex-end' }}>
+                    <Box display="flex" alignItems="center" sx={{ marginRight: 'auto' }}>
+                        <IconButton
+                            size="large"
+                            aria-label="account of current user"
+                            aria-controls="menu-appbar"
+                            aria-haspopup="true"
+                            onClick={redirectToFeed}
+                            color="inherit"
+                        >
+                            <HomeIcon />
+                        </IconButton>
+                        <IconButton
+                            size="large"
+                            aria-label="account of current user"
+                            aria-controls="menu-appbar"
+                            aria-haspopup="true"
+                            onClick={redirectToEditor}
+                            color="inherit"
+                        >
+                            <PaletteIcon />
+                        </IconButton>
+                    </Box>
+
                     <Box display="flex" alignItems="center">
                         <Typography variant="h5" component={'p'}>
-                            UserName
+                            {getAuth()?.currentUser?.displayName}
                         </Typography>
                         <IconButton
                             size="large"
