@@ -20,12 +20,14 @@ import Crop32Icon from '@mui/icons-material/Crop32';
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
 import BrushIcon from '@mui/icons-material/Brush';
-import { useEffect, useRef, useState } from 'react';
-import { getStorage, ref, uploadString } from 'firebase/storage';
+import { Fragment, useEffect, useRef, useState } from 'react';
+import { getDownloadURL, getStorage, ref, uploadString } from 'firebase/storage';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { uploadSuccessful } from '../../../shared/api';
+import { addDoc, collection, getDocs, query } from 'firebase/firestore';
+import { db } from '../../../shared/config/firebaseConfig';
 
 function Canvas() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -38,6 +40,8 @@ function Canvas() {
     const [prevMouseY, setprevMouseY] = useState(0);
     const [snapshot, setSnapshot] = useState<ImageData | null>(null);
     const [figureIsFilled, setFigureIsFilled] = useState(false);
+
+    const [images, setImages] = useState([]);
 
     useEffect(() => {
         if (canvasRef.current) {
@@ -118,20 +122,46 @@ function Canvas() {
 
     // Saving
     const storage = getStorage();
-    const saveImage = () => {
+
+    const saveImage = async () => {
         const img = canvasRef.current?.toDataURL();
-        const imageName = `${Date.now()}.jpg`;
+        const imageName = `${Date.now()}`;
         /* const imageRef = ref(storage, `images/${imageName}`); */
         const storageRef = ref(storage, `/images/${imageName}`);
-        uploadString(storageRef, img!, 'data_url').then(() => {
+        await uploadString(storageRef, img!, 'data_url').then(() => {
             uploadSuccessful();
             console.log('Succesfully uploaded a data_url string!');
         });
+        const downloadURL = await getDownloadURL(storageRef);
+
+        const uploading = await addDoc(collection(db, 'users'), {
+            name: 'Test',
+            image: downloadURL,
+        });
+
+        console.log('Uploading....', uploading);
     };
 
     const handleChange = (_: Event, newValue: number | number[]) => {
         setLineWidth(newValue as number);
     };
+
+    // Get data from db
+    const q = query(collection(db, 'users'));
+    useEffect(() => {
+        const fetchImages = async () => {
+            try {
+                const response = await getDocs(q);
+                console.log(response);
+                const imageArray = response.docs.map((doc) => doc.data());
+                setImages(imageArray);
+            } catch (error) {
+                console.error('Ошибка при получении изображений:', error);
+            }
+        };
+
+        fetchImages();
+    }, []);
 
     return (
         <Container>
@@ -218,6 +248,16 @@ function Canvas() {
                 </Grid>
             </Grid>
             <ToastContainer />
+            <Container>
+                {images.map((el) => {
+                    return (
+                        <Fragment key={el.name}>
+                            <p>{el.name}</p>
+                            <img src={el.image} alt="" />
+                        </Fragment>
+                    );
+                })}
+            </Container>
         </Container>
     );
 }
