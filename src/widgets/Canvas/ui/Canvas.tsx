@@ -20,14 +20,16 @@ import Crop32Icon from '@mui/icons-material/Crop32';
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
 import BrushIcon from '@mui/icons-material/Brush';
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useContext, useEffect, useRef, useState } from 'react';
 import { getDownloadURL, getStorage, ref, uploadString } from 'firebase/storage';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { uploadSuccessful } from '../../../shared/api';
-import { addDoc, collection, getDocs, query } from 'firebase/firestore';
+import { DocumentData, addDoc, collection, getDocs, query } from 'firebase/firestore';
 import { db } from '../../../shared/config/firebaseConfig';
+import { AuthContext } from '../../../app/context/Auth';
+import { v4 as uuidv4 } from 'uuid';
 
 function Canvas() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -41,7 +43,9 @@ function Canvas() {
     const [snapshot, setSnapshot] = useState<ImageData | null>(null);
     const [figureIsFilled, setFigureIsFilled] = useState(false);
 
-    const [images, setImages] = useState([]);
+    const [images, setImages] = useState<DocumentData[]>([]);
+
+    const currentUser = useContext(AuthContext);
 
     useEffect(() => {
         if (canvasRef.current) {
@@ -125,7 +129,7 @@ function Canvas() {
 
     const saveImage = async () => {
         const img = canvasRef.current?.toDataURL();
-        const imageName = `${Date.now()}`;
+        const imageName = uuidv4();
         /* const imageRef = ref(storage, `images/${imageName}`); */
         const storageRef = ref(storage, `/images/${imageName}`);
         await uploadString(storageRef, img!, 'data_url').then(() => {
@@ -135,7 +139,9 @@ function Canvas() {
         const downloadURL = await getDownloadURL(storageRef);
 
         const uploading = await addDoc(collection(db, 'users'), {
-            name: 'Test',
+            id: imageName,
+            name: currentUser?.displayName,
+            email: currentUser?.email,
             image: downloadURL,
         });
 
@@ -152,7 +158,6 @@ function Canvas() {
         const fetchImages = async () => {
             try {
                 const response = await getDocs(q);
-                console.log(response);
                 const imageArray = response.docs.map((doc) => doc.data());
                 setImages(imageArray);
             } catch (error) {
@@ -251,8 +256,9 @@ function Canvas() {
             <Container>
                 {images.map((el) => {
                     return (
-                        <Fragment key={el.name}>
+                        <Fragment key={el.id}>
                             <p>{el.name}</p>
+                            <p>{el.email}</p>
                             <img src={el.image} alt="" />
                         </Fragment>
                     );
