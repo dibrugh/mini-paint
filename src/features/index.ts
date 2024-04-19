@@ -3,6 +3,7 @@ import { signOutUser } from './Auth/lib/SignOut';
 import { createUser } from './Auth/lib/SignUp';
 import { userStateListener } from './Auth/lib/userStateListener';
 import useCanvasToolbar from './CanvasToolbar/useCanvasToolbar';
+import { UseFilterByUsers } from './FilterByUser/FilterByUser';
 import { UsefetchImages } from './ImagesCRUD/lib/UsefetchImages';
 import { saveImage } from './ImagesCRUD/lib/saveImage';
 
@@ -14,4 +15,5 @@ export {
     saveImage,
     useCanvasToolbar,
     UsefetchImages,
+    UseFilterByUsers,
 };

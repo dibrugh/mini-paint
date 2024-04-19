@@ -1,14 +1,21 @@
-import Select, { StylesConfig } from 'react-select';
+import Select, { StylesConfig, OnChangeValue } from 'react-select';
+import { UseFilterByUsers } from '../../../features';
 
-const mockOptions = [
-    { label: 'User1', value: 'User1' },
-    { label: 'User2', value: 'User2' },
-    { label: 'User3', value: 'User3' },
-    { label: 'User4', value: 'User4' },
-];
+type OptionType = { label: string; value: string };
 
-const FilterSelect = () => {
-    const customStyles: StylesConfig = {
+type Props = {
+    setSelectedUsers: (options: OptionType[]) => void;
+};
+
+const FilterSelect = ({ setSelectedUsers }: Props) => {
+    const { usersData } = UseFilterByUsers();
+
+    const handleChange = (selectedOption: OnChangeValue<OptionType, true>) => {
+        const options = selectedOption as OptionType[];
+        setSelectedUsers(options);
+    };
+
+    const customStyles: StylesConfig<OptionType> = {
         container: (styles) => ({
             ...styles,
             display: 'flex',
@@ -33,14 +40,16 @@ const FilterSelect = () => {
         input: (styles) => ({ ...styles }),
         placeholder: (styles) => ({ ...styles }),
     };
+
     return (
         <Select
             isMulti
             name="users"
-            options={mockOptions}
+            options={usersData}
             className="basic-multi-select"
             classNamePrefix="select"
             styles={customStyles}
+            onChange={handleChange}
         />
     );
 };
