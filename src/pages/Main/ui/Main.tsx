@@ -1,10 +1,13 @@
 import { CssBaseline } from '@mui/material';
-import { Header } from '../../../widgets';
+import { Header, ImagesCardList } from '../../../widgets';
+import { FilterSelect } from '../../../entities';
 
 const Main = () => {
     return (
         <>
             <Header />
+            <FilterSelect />
+            <ImagesCardList />
             <CssBaseline />
         </>
     );

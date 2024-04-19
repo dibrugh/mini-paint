@@ -4,17 +4,10 @@ import HomeIcon from '@mui/icons-material/Home';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { AppBar, Box, Button, IconButton, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
 import { useState } from 'react';
-import Select, { StylesConfig } from 'react-select';
+
 import { signOut } from '../../../features';
 import { useNavigate } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
-
-const mockOptions = [
-    { label: 'User1', value: 'User1' },
-    { label: 'User2', value: 'User2' },
-    { label: 'User3', value: 'User3' },
-    { label: 'User4', value: 'User4' },
-];
 
 export default function Header() {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -36,34 +29,8 @@ export default function Header() {
         navigate('/feed');
     };
 
-    const customStyles: StylesConfig = {
-        container: (styles) => ({
-            ...styles,
-            display: 'flex',
-            justifyContent: 'center',
-            paddingTop: '50px',
-        }),
-        control: (styles) => ({
-            ...styles,
-            backgroundColor: 'white',
-            width: '100%',
-            maxWidth: '700px',
-            minWidth: '300px',
-        }),
-        menu: (styles) => ({
-            ...styles,
-            backgroundColor: 'white',
-            width: '100%',
-            maxWidth: '700px',
-            minWidth: '300px',
-        }),
-        option: (styles) => ({ ...styles }),
-        input: (styles) => ({ ...styles }),
-        placeholder: (styles) => ({ ...styles }),
-    };
-
     return (
-        <Box sx={{ flexGrow: 1 }}>
+        <Box>
             <AppBar position="static">
                 <Toolbar sx={{ justifyContent: 'flex-end' }}>
                     <Box display="flex" alignItems="center" sx={{ marginRight: 'auto' }}>
@@ -141,15 +108,6 @@ export default function Header() {
                     </Button>
                 </Toolbar>
             </AppBar>
-            <Select
-                isMulti
-                name="users"
-                options={mockOptions}
-                className="basic-multi-select"
-                classNamePrefix="select"
-                styles={customStyles}
-            />
-            ;
         </Box>
     );
 }

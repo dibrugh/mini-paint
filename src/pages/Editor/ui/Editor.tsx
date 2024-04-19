@@ -1,11 +1,13 @@
-import { Canvas } from '../../../widgets';
+import { Box, CssBaseline } from '@mui/material';
+import { Paint, Header } from '../../../widgets';
 
 const Editor = () => {
     return (
-        <div>
-            Editor
-            <Canvas />
-        </div>
+        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+            <Header />
+            <Paint />
+            <CssBaseline />
+        </Box>
     );
 };
 
