@@ -10,7 +10,7 @@ export function UsefetchImages() {
         const fetchImages = async () => {
             try {
                 const response = await getDocs(q);
-                const imageArray = response.docs.map((doc) => doc.data());
+                const imageArray = response.docs.map((doc) => ({ ...doc.data(), documentId: doc.id }));
                 setImagesData(imageArray);
             } catch (error) {
                 console.error('Failed to get images...', error);

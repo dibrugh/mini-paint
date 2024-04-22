@@ -5,6 +5,7 @@ import { userStateListener } from './Auth/lib/userStateListener';
 import useCanvasToolbar from './CanvasToolbar/useCanvasToolbar';
 import { UseFilterByUsers } from './FilterByUser/FilterByUser';
 import { UsefetchImages } from './ImagesCRUD/lib/UsefetchImages';
+import { handleDelete } from './ImagesCRUD/lib/deleteImage';
 import { saveImage } from './ImagesCRUD/lib/saveImage';
 
 export {
@@ -16,4 +17,5 @@ export {
     useCanvasToolbar,
     UsefetchImages,
     UseFilterByUsers,
+    handleDelete,
 };
