@@ -57,12 +57,14 @@ function Paint({ imageId }: Props) {
     const [imageURL, setImageURL] = useState('');
     const { imagesData } = UsefetchImages();
     useEffect(() => {
-        const getImageUrl = async () => {
-            const result = await getDownloadURL(ref(storage, `/images/${imageId}`));
-            setImageURL(result);
-        };
-        getImageUrl();
-    }, [imageId]);
+        if (imageId) {
+            const getImageUrl = async () => {
+                const result = await getDownloadURL(ref(storage, `/images/${imageId}`));
+                setImageURL(result);
+            };
+            getImageUrl();
+        }
+    }, []);
 
     useEffect(() => {
         if (canvasRef.current) {
