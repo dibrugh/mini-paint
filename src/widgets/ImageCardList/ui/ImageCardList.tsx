@@ -1,4 +1,4 @@
-import { useFetchImages, handleDelete } from '../../../features';
+import { useFetchImages } from '../../../features';
 import { useMediaQuery, Container } from '@mui/material';
 
 import ImageList from '@mui/material/ImageList';
@@ -11,11 +11,6 @@ type ImagesCardListProps = {
 
 const ImagesCardList = ({ selectedUsers }: ImagesCardListProps) => {
     const { imagesData } = useFetchImages(selectedUsers);
-
-    const handleDeleteImage = (id: string, documentId: string) => {
-        handleDelete(id, documentId);
-    };
-
     const matchDownSm = useMediaQuery('(max-width:700px)');
 
     return (
@@ -23,7 +18,7 @@ const ImagesCardList = ({ selectedUsers }: ImagesCardListProps) => {
             <Container sx={{ paddingTop: '20px' }}>
                 <ImageList cols={matchDownSm ? 2 : 4} gap={8}>
                     {imagesData.map((el) => (
-                        <ImageCard key={el.id} cardData={el} handleDeleteImage={handleDeleteImage} />
+                        <ImageCard key={el.id} cardData={el} />
                     ))}
                 </ImageList>
             </Container>

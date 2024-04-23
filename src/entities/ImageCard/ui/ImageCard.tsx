@@ -6,8 +6,9 @@ import { DocumentData } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
 import { ModalWindow } from '../../../shared/ui';
 import { AuthContext } from '../../../app/context/Auth';
+import { handleDelete } from '../../../features';
 
-const ImageCard = ({ cardData, handleDeleteImage }: DocumentData) => {
+const ImageCard = ({ cardData }: DocumentData) => {
     const { id, name, email, image, documentId } = cardData;
     const currentUser = useContext(AuthContext);
     const [open, setOpen] = useState(false);
@@ -16,16 +17,30 @@ const ImageCard = ({ cardData, handleDeleteImage }: DocumentData) => {
         setOpen(true);
     };
 
+    const handleDeleteImage = (event: React.MouseEvent<SVGSVGElement, MouseEvent>, id: string, documentId: string) => {
+        handleDelete(id, documentId);
+        event.stopPropagation();
+    };
+
     const renderEditAndDeleteIcons = () => {
         if (currentUser?.displayName === name) {
             return (
-                <Box>
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: 5,
+                        right: 5,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        gap: '10px',
+                    }}
+                >
                     <Link to={`/editor/${id}`}>
                         <EditIcon />
                     </Link>
                     <DeleteIcon
-                        onClick={() => {
-                            handleDeleteImage(id, documentId);
+                        onClick={(event) => {
+                            handleDeleteImage(event, id, documentId);
                         }}
                     />
                 </Box>
