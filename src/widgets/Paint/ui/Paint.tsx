@@ -23,10 +23,15 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AuthContext } from '../../../app/context/Auth';
-import { saveImage, useCanvasToolbar } from '../../../features';
+import { UsefetchImages, saveImage, useCanvasToolbar } from '../../../features';
 import { HexColorPicker } from 'react-colorful';
+import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 
-function Paint() {
+type Props = {
+    imageId?: string;
+};
+
+function Paint({ imageId }: Props) {
     const currentUser = useContext(AuthContext);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const contextRef = useRef<CanvasRenderingContext2D | null>(null);
@@ -43,8 +48,21 @@ function Paint() {
         clearCanvas,
         selectedTool,
         setSelectedTool,
-    } = useCanvasToolbar({ contextRef, canvasRef, lineWidth, selectedColor, figureIsFilled, setLineWidth });
+    } = useCanvasToolbar({ contextRef, canvasRef, lineWidth, selectedColor, figureIsFilled, setLineWidth, imageId });
+
     const img = canvasRef.current?.toDataURL();
+
+    // experimental
+    const storage = getStorage();
+    const [imageURL, setImageURL] = useState('');
+    const { imagesData } = UsefetchImages();
+    useEffect(() => {
+        const getImageUrl = async () => {
+            const result = await getDownloadURL(ref(storage, `/images/${imageId}`));
+            setImageURL(result);
+        };
+        getImageUrl();
+    }, [imageId]);
 
     useEffect(() => {
         if (canvasRef.current) {
@@ -53,9 +71,9 @@ function Paint() {
 
             const context = canvasRef.current.getContext('2d', { willReadFrequently: true });
             contextRef.current = context;
-            setDefaultCanvasBackground();
+            setDefaultCanvasBackground(imageURL);
         }
-    }, []);
+    }, [imageURL]);
 
     const isActive = {
         color: '#fff',
@@ -154,7 +172,10 @@ function Paint() {
                         <Button variant="outlined" onClick={clearCanvas}>
                             Clear canvas
                         </Button>
-                        <Button variant="contained" onClick={() => saveImage({ img, currentUser })}>
+                        <Button
+                            variant="contained"
+                            onClick={() => saveImage({ img, currentUser, imageId, imageURL, imagesData })}
+                        >
                             Save
                         </Button>
                     </Box>

@@ -7,6 +7,7 @@ type Props = {
     setLineWidth: React.Dispatch<React.SetStateAction<number>>;
     selectedColor: string;
     figureIsFilled: boolean;
+    imageId?: string;
 };
 
 function useCanvasToolbar(props: Props) {
@@ -77,8 +78,15 @@ function useCanvasToolbar(props: Props) {
         canvasRef.current && contextRef.current?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     };
 
-    const setDefaultCanvasBackground = () => {
-        if (contextRef.current && canvasRef.current) {
+    const setDefaultCanvasBackground = (test: string) => {
+        if (contextRef.current && canvasRef.current && test) {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.src = test;
+            img.onload = () => {
+                contextRef.current!.drawImage(img, 0, 0);
+            };
+        } else if (contextRef.current && canvasRef.current && !test) {
             contextRef.current.fillStyle = '#ffffff';
             contextRef.current.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
             contextRef.current.fillStyle = selectedColor;

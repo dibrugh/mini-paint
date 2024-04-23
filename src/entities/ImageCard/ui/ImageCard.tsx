@@ -1,29 +1,47 @@
-import { ImageListItem, ImageListItemBar } from '@mui/material';
+import { Box, ImageListItem, ImageListItemBar } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import { DocumentData } from 'firebase/firestore';
-import { handleDelete } from '../../../features';
 
-const ImageCard = ({ cardData }: DocumentData) => {
+import { useContext } from 'react';
+import { AuthContext } from '../../../app/context/Auth';
+import { Link } from 'react-router-dom';
+
+const ImageCard = ({ cardData, handleDeleteImage }: DocumentData) => {
     const { id, name, email, image, documentId } = cardData;
+    const currentUser = useContext(AuthContext);
 
     return (
         <ImageListItem sx={{ position: 'relative' }}>
-            <DeleteIcon
-                onClick={() => {
-                    handleDelete(id, documentId);
-                    console.log('Deleted', id);
-                }}
-                sx={{
-                    position: 'absolute',
-                    top: 5,
-                    right: 5,
-                    borderRadius: '50%',
-                    background: '#e1d9d9',
-                    padding: '5px',
-                    cursor: 'pointer',
-                }}
+            {currentUser?.displayName === name ? (
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: 5,
+                        right: 5,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        gap: '10px',
+                    }}
+                >
+                    <Link to={`/editor/${id}`}>
+                        <EditIcon />
+                    </Link>
+
+                    <DeleteIcon
+                        onClick={() => {
+                            handleDeleteImage(id, documentId);
+                        }}
+                    />
+                </Box>
+            ) : null}
+            <img
+                srcSet={`${image} 2x`}
+                src={image}
+                alt={`created by ${name}`}
+                loading="lazy"
+                style={{ cursor: 'zoom-in' }}
             />
-            <img srcSet={`${image} 2x`} src={image} alt={`created by ${name}`} loading="lazy" />
             <ImageListItemBar
                 title={
                     <p>

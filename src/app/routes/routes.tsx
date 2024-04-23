@@ -22,13 +22,19 @@ export const router = createBrowserRouter([
         errorElement: <Error />,
     },
     {
-        path: '/editor',
+        path: '/editor/*',
         element: (
             <VerifyAuthorization>
                 <Editor />
             </VerifyAuthorization>
         ),
         errorElement: <Error />,
+        children: [
+            {
+                path: ':imageId',
+                element: <Editor />,
+            },
+        ],
     },
     {
         path: '/sign-in',
