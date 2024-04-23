@@ -3,8 +3,10 @@ import { Header, ImagesCardList } from '../../../widgets';
 import { FilterSelect } from '../../../entities';
 import { useState } from 'react';
 
+type OptionType = { label: string; value: string };
+
 const Main = () => {
-    const [selectedUsers, setSelectedUsers] = useState<null | { label: string; value: string }[]>(null);
+    const [selectedUsers, setSelectedUsers] = useState<OptionType[]>();
     return (
         <>
             <Header />

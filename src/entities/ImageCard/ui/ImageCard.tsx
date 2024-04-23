@@ -7,12 +7,18 @@ import { useContext } from 'react';
 import { AuthContext } from '../../../app/context/Auth';
 import { Link } from 'react-router-dom';
 
-const ImageCard = ({ cardData, handleDeleteImage }: DocumentData) => {
+const ImageCard = ({ cardData, handleDeleteImage, setSelectedImage, onClick }: DocumentData) => {
     const { id, name, email, image, documentId } = cardData;
     const currentUser = useContext(AuthContext);
 
     return (
-        <ImageListItem sx={{ position: 'relative' }}>
+        <ImageListItem
+            sx={{ position: 'relative' }}
+            onClick={() => {
+                setSelectedImage({ image, name });
+                onClick();
+            }}
+        >
             {currentUser?.displayName === name ? (
                 <Box
                     sx={{

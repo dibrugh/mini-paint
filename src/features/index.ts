@@ -4,7 +4,7 @@ import { createUser } from './Auth/lib/SignUp';
 import { userStateListener } from './Auth/lib/userStateListener';
 import useCanvasToolbar from './CanvasToolbar/useCanvasToolbar';
 import { UseFilterByUsers } from './FilterByUser/FilterByUser';
-import { UsefetchImages } from './ImagesCRUD/lib/UsefetchImages';
+import { useFetchImages } from './ImagesCRUD/lib/useFetchImages';
 import { handleDelete } from './ImagesCRUD/lib/deleteImage';
 import { saveImage } from './ImagesCRUD/lib/saveImage';
 
@@ -15,7 +15,7 @@ export {
     userStateListener,
     saveImage,
     useCanvasToolbar,
-    UsefetchImages,
+    useFetchImages,
     UseFilterByUsers,
     handleDelete,
 };
