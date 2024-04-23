@@ -4,7 +4,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { DocumentData } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
-import ModalWindow from '../../ModalWindow/ui/ModalWindow';
+import { ModalWindow } from '../../../shared/ui';
 import { AuthContext } from '../../../app/context/Auth';
 
 const ImageCard = ({ cardData, handleDeleteImage }: DocumentData) => {
