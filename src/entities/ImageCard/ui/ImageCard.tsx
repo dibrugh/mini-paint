@@ -35,7 +35,7 @@ const ImageCard = ({ cardData }: DocumentData) => {
                         gap: '10px',
                     }}
                 >
-                    <Link to={`/editor/${id}`}>
+                    <Link to={`/editor/${id}`} style={{ color: 'rgba(0, 0, 0, 0.87)' }}>
                         <EditIcon />
                     </Link>
                     <DeleteIcon
