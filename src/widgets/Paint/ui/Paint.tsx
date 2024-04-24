@@ -14,6 +14,7 @@ import {
     Slider,
     Switch,
     Typography,
+    useMediaQuery,
 } from '@mui/material';
 import Crop32Icon from '@mui/icons-material/Crop32';
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
@@ -35,6 +36,9 @@ type Props = {
 };
 
 function Paint({ imageId }: Props) {
+    const matchDownM = useMediaQuery('(max-width:1000px)');
+    const matchDownSm = useMediaQuery('(max-width:700px)');
+
     const { email, displayName } = useUser();
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const contextRef = useRef<CanvasRenderingContext2D | null>(null);
@@ -196,90 +200,130 @@ function Paint({ imageId }: Props) {
 
     return (
         <Container sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
-            <Grid container spacing={2}>
-                <Grid item xs={3}>
-                    <Typography variant="h5" component="h5" sx={{ marginBottom: '15px' }}>
-                        Shapes
-                    </Typography>
-                    <List>
-                        <ListItem disablePadding>
-                            <ListItemButton
-                                onClick={() => setSelectedTool('rectangle')}
-                                sx={selectedTool === 'rectangle' ? isActive : null}
-                            >
-                                <ListItemIcon>
-                                    <Crop32Icon />
-                                </ListItemIcon>
-                                <ListItemText primary="Rectangle" />
-                            </ListItemButton>
-                        </ListItem>
-                        <ListItem disablePadding>
-                            <ListItemButton
-                                onClick={() => setSelectedTool('circle')}
-                                sx={selectedTool === 'circle' ? isActive : null}
-                            >
-                                <ListItemIcon>
-                                    <PanoramaFishEyeIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="Circle" />
-                            </ListItemButton>
-                        </ListItem>
-                        <ListItem disablePadding>
-                            <ListItemButton
-                                onClick={() => setSelectedTool('line')}
-                                sx={selectedTool === 'line' ? isActive : null}
-                            >
-                                <ListItemIcon>
-                                    <HorizontalRuleIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="Line" />
-                            </ListItemButton>
-                        </ListItem>
-                        <ListItem disablePadding sx={{ margin: '10px 15px' }}>
-                            <FormGroup>
-                                <FormControlLabel
-                                    control={
-                                        <Switch
-                                            checked={figureIsFilled}
-                                            onChange={() => setFigureIsFilled(!figureIsFilled)}
-                                        />
-                                    }
-                                    label="Filled"
+            <Grid container spacing={2} flexDirection={matchDownSm ? 'column' : 'row'}>
+                <Grid
+                    item
+                    xs={matchDownSm ? 12 : matchDownM ? 2 : 3}
+                    sx={matchDownSm ? { display: 'flex', flexWrap: 'wrap' } : { display: 'block' }}
+                >
+                    <Box
+                        sx={matchDownSm ? { display: 'flex', alignItems: 'center' } : { display: 'block' }}
+                        flexDirection={matchDownSm ? 'row' : 'column'}
+                    >
+                        <Typography variant="h5" component="h5" sx={{ marginBottom: '15px' }}>
+                            Shapes
+                        </Typography>
+                        <List sx={matchDownSm ? { display: 'flex', alignItems: 'center' } : { display: 'block' }}>
+                            <ListItem disablePadding>
+                                <ListItemButton
+                                    onClick={() => setSelectedTool('rectangle')}
+                                    sx={selectedTool === 'rectangle' ? isActive : null}
+                                >
+                                    <ListItemIcon>
+                                        <Crop32Icon />
+                                    </ListItemIcon>
+                                    <ListItemText primary={matchDownM ? '' : 'Rectangle'} />
+                                </ListItemButton>
+                            </ListItem>
+                            <ListItem disablePadding>
+                                <ListItemButton
+                                    onClick={() => setSelectedTool('circle')}
+                                    sx={selectedTool === 'circle' ? isActive : null}
+                                >
+                                    <ListItemIcon>
+                                        <PanoramaFishEyeIcon />
+                                    </ListItemIcon>
+                                    <ListItemText primary={matchDownM ? '' : 'Circle'} />
+                                </ListItemButton>
+                            </ListItem>
+                            <ListItem disablePadding>
+                                <ListItemButton
+                                    onClick={() => setSelectedTool('line')}
+                                    sx={selectedTool === 'line' ? isActive : null}
+                                >
+                                    <ListItemIcon>
+                                        <HorizontalRuleIcon />
+                                    </ListItemIcon>
+                                    <ListItemText primary={matchDownM ? '' : 'Line'} />
+                                </ListItemButton>
+                            </ListItem>
+                            <ListItem disablePadding sx={{ margin: '10px 15px' }}>
+                                <FormGroup>
+                                    <FormControlLabel
+                                        control={
+                                            <Switch
+                                                checked={figureIsFilled}
+                                                onChange={() => setFigureIsFilled(!figureIsFilled)}
+                                            />
+                                        }
+                                        label={matchDownM ? '' : 'Filled'}
+                                    />
+                                </FormGroup>
+                            </ListItem>
+                        </List>
+                    </Box>
+
+                    <Box
+                        sx={matchDownSm ? { display: 'flex', alignItems: 'center' } : null}
+                        flexDirection={matchDownSm ? 'row' : 'column'}
+                    >
+                        <Typography variant="h5" component="h5" sx={{ marginBottom: '15px' }}>
+                            Options
+                        </Typography>
+                        <List sx={matchDownSm ? { display: 'flex', flexWrap: 'wrap' } : { display: 'block' }}>
+                            <ListItem disablePadding>
+                                <ListItemButton
+                                    onClick={() => setSelectedTool('brush')}
+                                    sx={selectedTool === 'brush' ? isActive : null}
+                                >
+                                    <ListItemIcon>
+                                        <BrushIcon />
+                                    </ListItemIcon>
+                                    <ListItemText primary={matchDownM ? '' : 'Brush'} />
+                                </ListItemButton>
+                            </ListItem>
+                            <ListItem disablePadding>
+                                <Slider
+                                    value={lineWidth}
+                                    aria-label="Default"
+                                    valueLabelDisplay="auto"
+                                    min={1}
+                                    max={20}
+                                    onChange={setWidth}
                                 />
-                            </FormGroup>
-                        </ListItem>
-                    </List>
-                    <Typography variant="h5" component="h5" sx={{ marginBottom: '15px' }}>
-                        Options
-                    </Typography>
-                    <List>
-                        <ListItem disablePadding>
-                            <ListItemButton
-                                onClick={() => setSelectedTool('brush')}
-                                sx={selectedTool === 'brush' ? isActive : null}
-                            >
-                                <ListItemIcon>
-                                    <BrushIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="Brush" />
-                            </ListItemButton>
-                        </ListItem>
-                        <ListItem disablePadding>
-                            <Slider
-                                value={lineWidth}
-                                aria-label="Default"
-                                valueLabelDisplay="auto"
-                                min={1}
-                                max={20}
-                                onChange={setWidth}
-                            />
-                        </ListItem>
-                    </List>
-                    <Typography variant="h5" component="h5" sx={{ marginBottom: '15px' }}>
-                        Colors
-                    </Typography>
-                    <HexColorPicker color={selectedColor} onChange={setSelectedColor} />
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-start', gap: '10px', paddingTop: '40px' }}>
+                            </ListItem>
+                        </List>
+                    </Box>
+
+                    <Box
+                        sx={matchDownSm ? { display: 'flex', alignItems: 'center' } : { display: 'block' }}
+                        flexDirection={matchDownSm ? 'row' : 'column'}
+                    >
+                        <Typography variant="h5" component="h5" sx={{ marginBottom: '15px' }}>
+                            Colors
+                        </Typography>
+                        <HexColorPicker
+                            color={selectedColor}
+                            onChange={setSelectedColor}
+                            style={
+                                matchDownSm
+                                    ? { width: '150px', height: '100px' }
+                                    : matchDownM
+                                      ? { width: '100%', height: '200px' }
+                                      : undefined
+                            }
+                        />
+                    </Box>
+
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'flex-start',
+                            gap: '10px',
+                            paddingTop: '40px',
+                        }}
+                        flexDirection={matchDownSm ? 'row' : matchDownM ? 'column' : 'row'}
+                    >
                         <Button variant="outlined" onClick={clearCanvas}>
                             Clear canvas
                         </Button>
@@ -288,7 +332,7 @@ function Paint({ imageId }: Props) {
                         </Button>
                     </Box>
                 </Grid>
-                <Grid item xs={9}>
+                <Grid item xs={matchDownSm ? 12 : matchDownM ? 10 : 9}>
                     <canvas
                         style={{ border: '1px black solid', width: '100%', height: '100%', touchAction: 'none' }}
                         onPointerMove={draw}
