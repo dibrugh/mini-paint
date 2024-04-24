@@ -1,16 +1,16 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { Box, ImageListItem, ImageListItemBar } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { DocumentData } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
 import { ModalWindow } from '../../../shared/ui';
-import { AuthContext } from '../../../app/context/Auth';
 import { handleDelete } from '../../../features';
+import { useUser } from '../../../app/store/useUser';
 
 const ImageCard = ({ cardData }: DocumentData) => {
-    const { id, name, email, image, documentId } = cardData;
-    const currentUser = useContext(AuthContext);
+    const { id, name, image, documentId } = cardData;
+    const { email, displayName } = useUser();
     const [open, setOpen] = useState(false);
 
     const handleOpen = () => {
@@ -23,7 +23,7 @@ const ImageCard = ({ cardData }: DocumentData) => {
     };
 
     const renderEditAndDeleteIcons = () => {
-        if (currentUser?.displayName === name) {
+        if (displayName === name) {
             return (
                 <Box
                     sx={{

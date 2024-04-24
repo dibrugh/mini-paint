@@ -13,6 +13,9 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { loginError } from '../../../../shared/api';
 
+import { setUser } from '../../../../features/Auth/model/userSlice';
+import { useAppDispatch } from '../../../../app/store/redux-hooks';
+
 const signInSchema = yup.object().shape({
     email: yup.string().email().required('Email is required'),
     password: yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
@@ -38,9 +41,17 @@ const SignIn = () => {
 
     const navigate = useNavigate();
 
+    const dispatch = useAppDispatch();
+
     const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
         try {
-            await signIn(email, password);
+            const user = await signIn(email, password);
+            dispatch(
+                setUser({
+                    email: user.user.email,
+                    displayName: user.user.displayName,
+                })
+            );
             navigate('/feed');
         } catch (error) {
             console.log(error);

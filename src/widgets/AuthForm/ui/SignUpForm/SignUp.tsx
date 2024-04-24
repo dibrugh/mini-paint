@@ -11,6 +11,9 @@ import { useNavigate } from 'react-router-dom';
 import { updateProfile } from 'firebase/auth';
 import { auth } from '../../../../shared/config/firebaseConfig';
 
+import { setUser } from '../../../../features/Auth/model/userSlice';
+import { useAppDispatch } from '../../../../app/store/redux-hooks';
+
 const signUpSchema = yup.object().shape({
     userName: yup.string().required('Username is required'),
     email: yup.string().email().required('Email is required'),
@@ -37,9 +40,16 @@ const SignUp = () => {
         resolver: yupResolver(signUpSchema),
     });
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
     const onSubmit: SubmitHandler<Inputs> = async ({ email, password, userName }) => {
         try {
-            await signUp(email, password);
+            const newUser = await signUp(email, password);
+            dispatch(
+                setUser({
+                    email: newUser.user.email,
+                    displayName: newUser.user.displayName,
+                })
+            );
             auth.currentUser &&
                 (await updateProfile(auth.currentUser, {
                     displayName: userName,

@@ -1,5 +1,5 @@
 import { useFetchImages } from '../../../features';
-import { useMediaQuery, Container } from '@mui/material';
+import { useMediaQuery, Container, CircularProgress, Box } from '@mui/material';
 
 import ImageList from '@mui/material/ImageList';
 import { ImageCard } from '../../../entities';
@@ -10,19 +10,21 @@ type ImagesCardListProps = {
 };
 
 const ImagesCardList = ({ selectedUsers }: ImagesCardListProps) => {
-    const { imagesData } = useFetchImages(selectedUsers);
+    const { imagesData, loading } = useFetchImages(selectedUsers);
     const matchDownSm = useMediaQuery('(max-width:700px)');
 
-    return (
-        imagesData && (
-            <Container sx={{ paddingTop: '20px' }}>
-                <ImageList cols={matchDownSm ? 2 : 4} gap={8}>
-                    {imagesData.map((el) => (
-                        <ImageCard key={el.id} cardData={el} />
-                    ))}
-                </ImageList>
-            </Container>
-        )
+    return imagesData && !loading ? (
+        <Container sx={{ paddingTop: '20px' }}>
+            <ImageList cols={matchDownSm ? 2 : 4} gap={8}>
+                {imagesData.map((el) => (
+                    <ImageCard key={el.id} cardData={el} />
+                ))}
+            </ImageList>
+        </Container>
+    ) : (
+        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '100px' }}>
+            <CircularProgress size={150} />
+        </Box>
     );
 };
 

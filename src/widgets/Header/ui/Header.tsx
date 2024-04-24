@@ -8,8 +8,13 @@ import { signOut } from '../../../features';
 import { useNavigate } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 
+import { removeUser } from '../../../features/Auth/model/userSlice';
+import { useAppDispatch } from '../../../app/store/redux-hooks';
+
 export default function Header() {
     const navigate = useNavigate();
+
+    const dispatch = useAppDispatch();
 
     const redirectToEditor = () => {
         navigate('/editor');
@@ -64,11 +69,12 @@ export default function Header() {
                         color="inherit"
                         onClick={async () => {
                             try {
-                                signOut();
+                                await signOut();
+                                dispatch(removeUser());
                                 navigate('/sign-in');
                             } catch (error) {
                                 if (error instanceof Error) {
-                                    console.log((error as Error).message);
+                                    console.log(error.message);
                                 } else {
                                     console.log('An unknown error occurred');
                                 }

@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { Editor, Error, Main, SignIn, SignUp } from '../../pages';
-import { VerifyAuthorization } from './VerifyAuthorization';
+import { VerifyAuthorization } from '../../shared/router/VerifyAuthorization';
 
 export const router = createBrowserRouter([
     {

@@ -1,13 +1,11 @@
 import { RouterProvider } from 'react-router-dom';
 import { router } from './routes/routes';
-import { AuthProvider } from './context/Auth';
+import { useUser } from './store/useUser';
+import { LinearProgress } from '@mui/material';
 
 function App() {
-    return (
-        <AuthProvider>
-            <RouterProvider router={router} />
-        </AuthProvider>
-    );
+    const { isLoading } = useUser();
+    return isLoading ? <LinearProgress /> : <RouterProvider router={router} />;
 }
 
 export default App;

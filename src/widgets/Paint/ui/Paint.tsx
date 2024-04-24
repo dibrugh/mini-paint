@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
     Box,
     Button,
@@ -24,18 +24,18 @@ import { HexColorPicker } from 'react-colorful';
 import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../shared/config/firebaseConfig';
-import { AuthContext } from '../../../app/context/Auth';
 import { useFetchImages } from '../../../features';
 import { uploadSuccessful } from '../../../shared/api';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useUser } from '../../../app/store/useUser';
 
 type Props = {
     imageId?: string;
 };
 
 function Paint({ imageId }: Props) {
-    const currentUser = useContext(AuthContext);
+    const { email, displayName } = useUser();
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const contextRef = useRef<CanvasRenderingContext2D | null>(null);
     const [lineWidth, setLineWidth] = useState(1);
@@ -170,8 +170,8 @@ function Paint({ imageId }: Props) {
             const imageRef = doc(db, 'users', testDocumentId);
             const uploading = await updateDoc(imageRef, {
                 id: imageId,
-                name: currentUser?.displayName,
-                email: currentUser?.email,
+                name: displayName,
+                email: email,
                 image: downloadURL,
             });
 
@@ -185,8 +185,8 @@ function Paint({ imageId }: Props) {
             const downloadURL = await getDownloadURL(storageRef);
             const uploading = await addDoc(collection(db, 'users'), {
                 id: newImageId,
-                name: currentUser?.displayName,
-                email: currentUser?.email,
+                name: displayName,
+                email: email,
                 image: downloadURL,
             });
 

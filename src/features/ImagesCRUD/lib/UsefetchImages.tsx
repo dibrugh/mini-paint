@@ -7,6 +7,7 @@ type UseFetchImagesProps = OptionType[] | undefined;
 
 export function useFetchImages(selectedUsers?: UseFetchImagesProps) {
     const [imagesData, setImagesData] = useState<DocumentData[] | null>(null);
+    const [loading, setLoading] = useState(false);
 
     let q;
     if (selectedUsers?.length) {
@@ -23,9 +24,11 @@ export function useFetchImages(selectedUsers?: UseFetchImagesProps) {
     }
 
     useEffect(() => {
+        let unsubscribe: () => void;
+        setLoading(true);
         const fetchImages = async () => {
             try {
-                onSnapshot(q, (querySnapshot) => {
+                unsubscribe = onSnapshot(q, (querySnapshot) => {
                     const imageArray: DocumentData[] = [];
                     querySnapshot.forEach((doc) => {
                         imageArray.push({ ...doc.data(), documentId: doc.id });
@@ -37,7 +40,13 @@ export function useFetchImages(selectedUsers?: UseFetchImagesProps) {
             }
         };
         fetchImages();
+
+        setLoading(false);
+
+        return () => {
+            unsubscribe();
+        };
     }, [q, selectedUsers]);
 
-    return { imagesData };
+    return { imagesData, loading };
 }
