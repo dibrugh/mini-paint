@@ -290,10 +290,10 @@ function Paint({ imageId }: Props) {
                 </Grid>
                 <Grid item xs={9}>
                     <canvas
-                        style={{ border: '1px black solid', width: '100%', height: '100%' }}
-                        onMouseMove={draw}
-                        onMouseDown={startDrawing}
-                        onMouseUp={finishDrawing}
+                        style={{ border: '1px black solid', width: '100%', height: '100%', touchAction: 'none' }}
+                        onPointerMove={draw}
+                        onPointerDown={startDrawing}
+                        onPointerUp={finishDrawing}
                         ref={canvasRef}
                     />
                 </Grid>
