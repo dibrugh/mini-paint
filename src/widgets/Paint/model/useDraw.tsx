@@ -1,29 +1,33 @@
 import { useState } from 'react';
 
+type selectedTool = 'brush' | 'rectangle' | 'circle' | 'line';
+
 type Props = {
     contextRef: React.MutableRefObject<CanvasRenderingContext2D | null>;
     canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
     lineWidth: number;
-    setLineWidth: React.Dispatch<React.SetStateAction<number>>;
     selectedColor: string;
+    selectedTool: selectedTool;
     figureIsFilled: boolean;
-    imageId?: string;
 };
 
-function useCanvasToolbar(props: Props) {
-    const { contextRef, canvasRef, lineWidth, selectedColor, figureIsFilled, setLineWidth } = props;
-
+export default function useDraw({
+    contextRef,
+    canvasRef,
+    lineWidth,
+    selectedColor,
+    selectedTool,
+    figureIsFilled,
+}: Props) {
     const [isDrawing, setIsDrawing] = useState(false);
-
-    const [selectedTool, setSelectedTool] = useState('brush');
-    const [prevMouseX, setprevMouseX] = useState(0);
-    const [prevMouseY, setprevMouseY] = useState(0);
+    const [prevMouseX, setPrevMouseX] = useState(0);
+    const [prevMouseY, setPrevMouseY] = useState(0);
     const [snapshot, setSnapshot] = useState<ImageData | null>(null);
 
     const startDrawing = ({ nativeEvent }: { nativeEvent: MouseEvent }) => {
         const { offsetX, offsetY } = nativeEvent;
-        setprevMouseX(offsetX);
-        setprevMouseY(offsetY);
+        setPrevMouseX(offsetX);
+        setPrevMouseY(offsetY);
         if (contextRef.current && canvasRef.current) {
             contextRef.current.beginPath();
             contextRef.current.moveTo(offsetX, offsetY);
@@ -73,40 +77,9 @@ function useCanvasToolbar(props: Props) {
                 break;
         }
     };
-
-    const clearCanvas = () => {
-        canvasRef.current && contextRef.current?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    };
-
-    const setDefaultCanvasBackground = (test: string) => {
-        if (contextRef.current && canvasRef.current && test) {
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.src = test;
-            img.onload = () => {
-                contextRef.current!.drawImage(img, 0, 0);
-            };
-        } else if (contextRef.current && canvasRef.current && !test) {
-            contextRef.current.fillStyle = '#ffffff';
-            contextRef.current.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-            contextRef.current.fillStyle = selectedColor;
-        }
-    };
-
-    const setWidth = (_: Event, newValue: number | number[]) => {
-        setLineWidth(newValue as number);
-    };
-
     return {
-        draw,
         startDrawing,
         finishDrawing,
-        setWidth,
-        setDefaultCanvasBackground,
-        clearCanvas,
-        selectedTool,
-        setSelectedTool,
+        draw,
     };
 }
-
-export default useCanvasToolbar;

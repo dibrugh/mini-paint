@@ -6,57 +6,56 @@ import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useState } from 'react';
-import { signUp } from '../../../../features';
-import { useNavigate } from 'react-router-dom';
-import { updateProfile } from 'firebase/auth';
-import { auth } from '../../../../shared/config/firebaseConfig';
+import { Link, useNavigate } from 'react-router-dom';
+import { signIn } from '../../../features';
 
-import { setUser } from '../../../../features/Auth/model/userSlice';
-import { useAppDispatch } from '../../../../app/store/redux-hooks';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { loginError } from '../../../shared/api';
 
-const signUpSchema = yup.object().shape({
-    userName: yup.string().required('Username is required'),
+import { setUser } from '../../../features/Auth/model/userSlice';
+import { useAppDispatch } from '../../../shared/model/reduxHooks';
+
+const signInSchema = yup.object().shape({
     email: yup.string().email().required('Email is required'),
     password: yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
 });
 
 type Inputs = {
-    userName: string;
     email: string;
     password: string;
 };
 
-const SignUp = () => {
+const SignIn = () => {
     const {
         handleSubmit,
         control,
         formState: { errors },
     } = useForm<Inputs>({
         defaultValues: {
-            userName: '',
             email: '',
             password: '',
         },
-        resolver: yupResolver(signUpSchema),
+        resolver: yupResolver(signInSchema),
     });
+
     const navigate = useNavigate();
+
     const dispatch = useAppDispatch();
-    const onSubmit: SubmitHandler<Inputs> = async ({ email, password, userName }) => {
+
+    const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
         try {
-            const newUser = await signUp(email, password);
+            const user = await signIn(email, password);
             dispatch(
                 setUser({
-                    email: newUser.user.email,
-                    displayName: newUser.user.displayName,
+                    email: user.user.email,
+                    displayName: user.user.displayName,
                 })
             );
-            auth.currentUser &&
-                (await updateProfile(auth.currentUser, {
-                    displayName: userName,
-                }));
-            navigate('/sign-in');
+            navigate('/feed');
         } catch (error) {
             console.log(error);
+            loginError();
         }
     };
 
@@ -71,7 +70,6 @@ const SignUp = () => {
 
     return (
         <Container maxWidth="sm" component="main" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
-            {/* style normalizing */}
             <CssBaseline />
 
             <Box
@@ -85,7 +83,10 @@ const SignUp = () => {
                 }}
             >
                 <Typography component="h1" variant="h4">
-                    Sign up
+                    Sign in
+                </Typography>
+                <Typography component="h2" variant="subtitle1">
+                    Don’t have an account? <Link to="/sign-up">SIGN UP</Link>
                 </Typography>
 
                 <form onSubmit={handleSubmit(onSubmit)}>
@@ -102,23 +103,6 @@ const SignUp = () => {
                                 autoComplete="email"
                                 error={!!errors.email?.message}
                                 helperText={errors.email?.message}
-                                {...field}
-                            />
-                        )}
-                    />
-                    <Controller
-                        name="userName"
-                        control={control}
-                        render={({ field }) => (
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="userName"
-                                label="User Name"
-                                autoComplete="username"
-                                error={!!errors.userName?.message}
-                                helperText={errors.userName?.message}
                                 {...field}
                             />
                         )}
@@ -161,8 +145,9 @@ const SignUp = () => {
                     </Button>
                 </form>
             </Box>
+            <ToastContainer />
         </Container>
     );
 };
 
-export default SignUp;
+export default SignIn;

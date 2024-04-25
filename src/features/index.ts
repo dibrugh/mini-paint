@@ -2,7 +2,6 @@ import { signInUser } from './Auth/lib/SignIn';
 import { signOutUser } from './Auth/lib/SignOut';
 import { createUser } from './Auth/lib/SignUp';
 import { userStateListener } from './Auth/lib/userStateListener';
-import useCanvasToolbar from './CanvasToolbar/useCanvasToolbar';
 import { UseFilterByUsers } from './FilterByUser/FilterByUser';
 import { useFetchImages } from './ImagesCRUD/lib/useFetchImages';
 import { handleDelete } from './ImagesCRUD/lib/deleteImage';
@@ -14,7 +13,6 @@ export {
     createUser as signUp,
     userStateListener,
     saveImage,
-    useCanvasToolbar,
     useFetchImages,
     UseFilterByUsers,
     handleDelete,

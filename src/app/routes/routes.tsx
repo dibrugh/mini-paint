@@ -1,32 +1,32 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { Editor, Error, Main, SignIn, SignUp } from '../../pages';
-import { VerifyAuthorization } from '../../shared/router/VerifyAuthorization';
+import { PrivateRoute } from '../../shared/router/PrivateRoute';
 
 export const router = createBrowserRouter([
     {
         path: '/',
         element: (
-            <VerifyAuthorization>
+            <PrivateRoute>
                 <Main />
-            </VerifyAuthorization>
+            </PrivateRoute>
         ),
         errorElement: <Error />,
     },
     {
         path: '/feed',
         element: (
-            <VerifyAuthorization>
+            <PrivateRoute>
                 <Main />
-            </VerifyAuthorization>
+            </PrivateRoute>
         ),
         errorElement: <Error />,
     },
     {
         path: '/editor/*',
         element: (
-            <VerifyAuthorization>
+            <PrivateRoute>
                 <Editor />
-            </VerifyAuthorization>
+            </PrivateRoute>
         ),
         errorElement: <Error />,
         children: [
@@ -39,9 +39,9 @@ export const router = createBrowserRouter([
     {
         path: '/sign-in',
         element: (
-            <VerifyAuthorization>
+            <PrivateRoute>
                 <SignIn />
-            </VerifyAuthorization>
+            </PrivateRoute>
         ),
     },
     {

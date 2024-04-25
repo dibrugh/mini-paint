@@ -1,13 +1,13 @@
 import { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
-import { useUser } from '../../app/store/useUser';
+import { useUser } from '../model/useUser';
 
-type VerifyAuthorizationProp = {
+type PrivateRouteProp = {
     children?: ReactNode;
 };
 
-export function VerifyAuthorization({ children }: VerifyAuthorizationProp) {
+export function PrivateRoute({ children }: PrivateRouteProp) {
     const { email } = useUser();
     const path = useLocation().pathname;
 

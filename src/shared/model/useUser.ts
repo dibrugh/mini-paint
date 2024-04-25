@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from './redux-hooks';
+import { useAppDispatch, useAppSelector } from './reduxHooks';
 import { removeUser, setUser, setLoading } from '../../features/Auth/model/userSlice';
 import { userStateListener } from '../../features';
 

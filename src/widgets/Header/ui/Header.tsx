@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 
 import { removeUser } from '../../../features/Auth/model/userSlice';
-import { useAppDispatch } from '../../../app/store/redux-hooks';
+import { useAppDispatch } from '../../../shared/model/reduxHooks';
 
 export default function Header() {
     const navigate = useNavigate();

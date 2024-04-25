@@ -5,14 +5,9 @@ import { useEffect, useMemo, useState } from 'react';
 type OptionType = { label: string; value: string };
 type UseFetchImagesProps = OptionType[] | undefined;
 
-// Убрал из списка зависимостей q, чтобы проверить, влияет ли это на количество запросов
-// Можно записывать массив картинок в Redux, чтобы не делать повторные запросы, если нет изменений
-
 export function useFetchImages(selectedUsers?: UseFetchImagesProps) {
     const [imagesData, setImagesData] = useState<DocumentData[] | null>(null);
     const [loading, setLoading] = useState(false);
-
-    console.log('hook is called');
 
     const q = useMemo(() => {
         if (selectedUsers?.length) {

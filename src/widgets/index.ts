@@ -1,5 +1,5 @@
-import SignIn from './AuthForm/ui/SignInForm/SignIn';
-import SignUp from './AuthForm/ui/SignUpForm/SignUp';
+import SignIn from './SignIn/ui/SignIn';
+import SignUp from './SignUp/ui/SignUp';
 import Paint from './Paint/ui/Paint';
 import Header from './Header/ui/Header';
 import ImagesCardList from './ImageCardList/ui/ImageCardList';

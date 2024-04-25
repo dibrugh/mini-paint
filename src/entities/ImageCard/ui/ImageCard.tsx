@@ -6,9 +6,9 @@ import { DocumentData } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
 import { ModalWindow } from '../../../shared/ui';
 import { handleDelete } from '../../../features';
-import { useUser } from '../../../app/store/useUser';
-import { useAppDispatch } from '../../../app/store/redux-hooks';
-import { setImage } from '../../../features/ImagesCRUD/model/imageSlice';
+import { useUser } from '../../../shared/model/useUser';
+import { useAppDispatch } from '../../../shared/model/reduxHooks';
+import { setImage } from '../model/imageSlice';
 
 const ImageCard = ({ cardData }: DocumentData) => {
     const { id, name, email, image, documentId } = cardData;

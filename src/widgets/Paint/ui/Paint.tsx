@@ -1,181 +1,49 @@
-import { useEffect, useRef, useState } from 'react';
-import {
-    Box,
-    Button,
-    Container,
-    FormControlLabel,
-    FormGroup,
-    Grid,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    Slider,
-    Switch,
-    Typography,
-    useMediaQuery,
-} from '@mui/material';
-import Crop32Icon from '@mui/icons-material/Crop32';
-import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
-import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
-import BrushIcon from '@mui/icons-material/Brush';
-import { v4 as uuidv4 } from 'uuid';
+import { useRef, useState } from 'react';
+import { useAppSelector } from '../../../shared/model/reduxHooks';
+import ToolBar from '../../../entities/ToolBar/ui/ToolBar';
+import { saveImage } from '../../../features';
 import { HexColorPicker } from 'react-colorful';
-import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
-import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
-import { db } from '../../../shared/config/firebaseConfig';
-import { uploadSuccessful } from '../../../shared/api';
 import { ToastContainer } from 'react-toastify';
+import { Box, Button, Container, Grid, List, ListItem, Slider, Typography, useMediaQuery } from '@mui/material';
+
 import 'react-toastify/dist/ReactToastify.css';
-import { useAppSelector } from '../../../app/store/redux-hooks';
+import useDraw from '../model/useDraw';
+import Canvas from '../../../entities/Canvas/ui/Canvas';
+
+type selectedTool = 'brush' | 'rectangle' | 'circle' | 'line';
 
 function Paint() {
-    const matchDownM = useMediaQuery('(max-width:1000px)');
-    const matchDownSm = useMediaQuery('(max-width:700px)');
-
+    const { image, id, documentId } = useAppSelector((state) => state.image);
+    const { displayName, email } = useAppSelector((state) => state.user);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const contextRef = useRef<CanvasRenderingContext2D | null>(null);
+
     const [lineWidth, setLineWidth] = useState(1);
     const [selectedColor, setSelectedColor] = useState('#000000');
     const [figureIsFilled, setFigureIsFilled] = useState(false);
-    const [isDrawing, setIsDrawing] = useState(false);
-    const [selectedTool, setSelectedTool] = useState('brush');
-    const [prevMouseX, setPrevMouseX] = useState(0);
-    const [prevMouseY, setPrevMouseY] = useState(0);
-    const [snapshot, setSnapshot] = useState<ImageData | null>(null);
+    const [selectedTool, setSelectedTool] = useState<selectedTool>('brush');
 
-    const storage = getStorage();
-    const { name, image, id, email, documentId } = useAppSelector((state) => state.image);
+    const matchDownM = useMediaQuery('(max-width:1000px)');
+    const matchDownSm = useMediaQuery('(max-width:700px)');
 
-    useEffect(() => {
-        if (canvasRef.current) {
-            canvasRef.current.width = canvasRef.current.offsetWidth;
-            canvasRef.current.height = canvasRef.current.offsetHeight;
-            const context = canvasRef.current.getContext('2d', { willReadFrequently: true });
-            contextRef.current = context;
-            setDefaultCanvasBackground(image);
-        }
-    }, [image]);
-
-    const startDrawing = ({ nativeEvent }: { nativeEvent: MouseEvent }) => {
-        const { offsetX, offsetY } = nativeEvent;
-        setPrevMouseX(offsetX);
-        setPrevMouseY(offsetY);
-        if (contextRef.current && canvasRef.current) {
-            contextRef.current.beginPath();
-            contextRef.current.moveTo(offsetX, offsetY);
-            contextRef.current.lineWidth = lineWidth;
-            contextRef.current.strokeStyle = selectedColor;
-            contextRef.current.fillStyle = selectedColor;
-            setSnapshot(contextRef.current.getImageData(0, 0, canvasRef.current.width, canvasRef.current.height));
-        }
-        setIsDrawing(true);
-    };
-    const finishDrawing = () => {
-        contextRef.current?.closePath();
-        setIsDrawing(false);
-    };
-    const draw = ({ nativeEvent }: { nativeEvent: MouseEvent }) => {
-        if (!isDrawing) {
-            return;
-        }
-        contextRef.current?.putImageData(snapshot as ImageData, 0, 0);
-        const { offsetX, offsetY } = nativeEvent;
-        switch (selectedTool) {
-            case 'brush':
-                contextRef.current?.lineTo(offsetX, offsetY);
-                contextRef.current?.stroke();
-                break;
-            case 'line':
-                contextRef.current?.beginPath();
-                contextRef.current?.moveTo(prevMouseX, prevMouseY);
-                contextRef.current?.lineTo(offsetX, offsetY);
-                contextRef.current?.closePath();
-                contextRef.current?.stroke();
-                break;
-            case 'rectangle': {
-                if (!figureIsFilled) {
-                    contextRef.current?.strokeRect(offsetX, offsetY, prevMouseX - offsetX, prevMouseY - offsetY);
-                } else contextRef.current?.fillRect(offsetX, offsetY, prevMouseX - offsetX, prevMouseY - offsetY);
-                break;
-            }
-            case 'circle': {
-                contextRef.current?.beginPath();
-                const radius = Math.sqrt(Math.pow(prevMouseX - offsetX, 2) + Math.pow(prevMouseX - offsetX, 2));
-                contextRef.current?.arc(prevMouseX, prevMouseY, radius, 0, 2 * Math.PI);
-                figureIsFilled ? contextRef.current?.fill() : contextRef.current?.stroke();
-                break;
-            }
-            default:
-                break;
-        }
-    };
+    const { startDrawing, finishDrawing, draw } = useDraw({
+        contextRef,
+        canvasRef,
+        lineWidth,
+        selectedColor,
+        selectedTool,
+        figureIsFilled,
+    });
 
     const clearCanvas = () => {
         canvasRef.current && contextRef.current?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    };
-
-    const setDefaultCanvasBackground = (imageURL: string | null) => {
-        if (contextRef.current && canvasRef.current && imageURL) {
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.src = imageURL;
-            img.onload = () => {
-                contextRef.current!.drawImage(img, 0, 0);
-            };
-        } else if (contextRef.current && canvasRef.current && !imageURL) {
-            contextRef.current.fillStyle = '#ffffff';
-            contextRef.current.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-            contextRef.current.fillStyle = selectedColor;
-        }
     };
 
     const setWidth = (_: Event, newValue: number | number[]) => {
         setLineWidth(newValue as number);
     };
 
-    const img = canvasRef.current?.toDataURL();
-
-    const isActive = {
-        color: '#fff',
-        backgroundColor: '#1976d2',
-        '&:hover': {
-            backgroundColor: '#1976d2',
-        },
-    };
-
-    // Save func
-    const saveImage = async () => {
-        if (image) {
-            const storageRef = ref(storage, `/images/${id}`);
-            await uploadString(storageRef, img!, 'data_url').then(() => {
-                uploadSuccessful();
-            });
-            const downloadURL = await getDownloadURL(storageRef);
-            const imageRef = doc(db, 'users', documentId);
-            const uploading = await updateDoc(imageRef, {
-                image: downloadURL,
-            });
-
-            console.log('Updating....', uploading);
-        } else {
-            const newImageId = uuidv4();
-            const storageRef = ref(storage, `/images/${newImageId}`);
-            await uploadString(storageRef, img!, 'data_url').then(() => {
-                uploadSuccessful();
-            });
-            const downloadURL = await getDownloadURL(storageRef);
-            const uploading = await addDoc(collection(db, 'users'), {
-                id: newImageId,
-                name: name,
-                email: email,
-                image: downloadURL,
-            });
-
-            console.log('Uploading....', uploading);
-        }
-    };
+    const imageDataURL = canvasRef.current?.toDataURL();
 
     return (
         <Container sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
@@ -185,63 +53,12 @@ function Paint() {
                     xs={matchDownSm ? 12 : matchDownM ? 2 : 3}
                     sx={matchDownSm ? { display: 'flex', flexWrap: 'wrap' } : { display: 'block' }}
                 >
-                    <Box
-                        sx={matchDownSm ? { display: 'flex', alignItems: 'center' } : { display: 'block' }}
-                        flexDirection={matchDownSm ? 'row' : 'column'}
-                    >
-                        <Typography variant="h5" component="h5" sx={{ marginBottom: '15px' }}>
-                            Shapes
-                        </Typography>
-                        <List sx={matchDownSm ? { display: 'flex', alignItems: 'center' } : { display: 'block' }}>
-                            <ListItem disablePadding>
-                                <ListItemButton
-                                    onClick={() => setSelectedTool('rectangle')}
-                                    sx={selectedTool === 'rectangle' ? isActive : null}
-                                >
-                                    <ListItemIcon>
-                                        <Crop32Icon />
-                                    </ListItemIcon>
-                                    <ListItemText primary={matchDownM ? '' : 'Rectangle'} />
-                                </ListItemButton>
-                            </ListItem>
-                            <ListItem disablePadding>
-                                <ListItemButton
-                                    onClick={() => setSelectedTool('circle')}
-                                    sx={selectedTool === 'circle' ? isActive : null}
-                                >
-                                    <ListItemIcon>
-                                        <PanoramaFishEyeIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary={matchDownM ? '' : 'Circle'} />
-                                </ListItemButton>
-                            </ListItem>
-                            <ListItem disablePadding>
-                                <ListItemButton
-                                    onClick={() => setSelectedTool('line')}
-                                    sx={selectedTool === 'line' ? isActive : null}
-                                >
-                                    <ListItemIcon>
-                                        <HorizontalRuleIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary={matchDownM ? '' : 'Line'} />
-                                </ListItemButton>
-                            </ListItem>
-                            <ListItem disablePadding sx={{ margin: '10px 15px' }}>
-                                <FormGroup>
-                                    <FormControlLabel
-                                        control={
-                                            <Switch
-                                                checked={figureIsFilled}
-                                                onChange={() => setFigureIsFilled(!figureIsFilled)}
-                                            />
-                                        }
-                                        label={matchDownM ? '' : 'Filled'}
-                                    />
-                                </FormGroup>
-                            </ListItem>
-                        </List>
-                    </Box>
-
+                    <ToolBar
+                        selectedTool={selectedTool}
+                        figureIsFilled={figureIsFilled}
+                        setSelectedTool={setSelectedTool}
+                        setFigureIsFilled={setFigureIsFilled}
+                    />
                     <Box
                         sx={matchDownSm ? { display: 'flex', alignItems: 'center' } : null}
                         flexDirection={matchDownSm ? 'row' : 'column'}
@@ -250,18 +67,7 @@ function Paint() {
                             Options
                         </Typography>
                         <List sx={matchDownSm ? { display: 'flex', flexWrap: 'wrap' } : { display: 'block' }}>
-                            <ListItem disablePadding>
-                                <ListItemButton
-                                    onClick={() => setSelectedTool('brush')}
-                                    sx={selectedTool === 'brush' ? isActive : null}
-                                >
-                                    <ListItemIcon>
-                                        <BrushIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary={matchDownM ? '' : 'Brush'} />
-                                </ListItemButton>
-                            </ListItem>
-                            <ListItem disablePadding>
+                            <ListItem disablePadding sx={{ marginBottom: '20px' }}>
                                 <Slider
                                     value={lineWidth}
                                     aria-label="Default"
@@ -271,29 +77,21 @@ function Paint() {
                                     onChange={setWidth}
                                 />
                             </ListItem>
+                            <ListItem disablePadding>
+                                <HexColorPicker
+                                    color={selectedColor}
+                                    onChange={setSelectedColor}
+                                    style={
+                                        matchDownSm
+                                            ? { width: '150px', height: '100px' }
+                                            : matchDownM
+                                              ? { width: '100%', height: '200px' }
+                                              : undefined
+                                    }
+                                />
+                            </ListItem>
                         </List>
                     </Box>
-
-                    <Box
-                        sx={matchDownSm ? { display: 'flex', alignItems: 'center' } : { display: 'block' }}
-                        flexDirection={matchDownSm ? 'row' : 'column'}
-                    >
-                        <Typography variant="h5" component="h5" sx={{ marginBottom: '15px' }}>
-                            Colors
-                        </Typography>
-                        <HexColorPicker
-                            color={selectedColor}
-                            onChange={setSelectedColor}
-                            style={
-                                matchDownSm
-                                    ? { width: '150px', height: '100px' }
-                                    : matchDownM
-                                      ? { width: '100%', height: '200px' }
-                                      : undefined
-                            }
-                        />
-                    </Box>
-
                     <Box
                         sx={{
                             display: 'flex',
@@ -306,18 +104,23 @@ function Paint() {
                         <Button variant="outlined" onClick={clearCanvas}>
                             Clear canvas
                         </Button>
-                        <Button variant="contained" onClick={saveImage}>
+                        <Button
+                            variant="contained"
+                            onClick={() => saveImage({ displayName, email, image, imageDataURL, id, documentId })}
+                        >
                             Save
                         </Button>
                     </Box>
                 </Grid>
                 <Grid item xs={matchDownSm ? 12 : matchDownM ? 10 : 9}>
-                    <canvas
-                        style={{ border: '1px black solid', width: '100%', height: '100%', touchAction: 'none' }}
-                        onPointerMove={draw}
-                        onPointerDown={startDrawing}
-                        onPointerUp={finishDrawing}
-                        ref={canvasRef}
+                    <Canvas
+                        image={image}
+                        canvasRef={canvasRef}
+                        contextRef={contextRef}
+                        draw={draw}
+                        startDrawing={startDrawing}
+                        finishDrawing={finishDrawing}
+                        selectedColor={selectedColor}
                     />
                 </Grid>
             </Grid>
