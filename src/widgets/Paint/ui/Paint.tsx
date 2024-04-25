@@ -25,21 +25,15 @@ import { HexColorPicker } from 'react-colorful';
 import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../shared/config/firebaseConfig';
-import { useFetchImages } from '../../../features';
 import { uploadSuccessful } from '../../../shared/api';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useUser } from '../../../app/store/useUser';
+import { useAppSelector } from '../../../app/store/redux-hooks';
 
-type Props = {
-    imageId?: string;
-};
-
-function Paint({ imageId }: Props) {
+function Paint() {
     const matchDownM = useMediaQuery('(max-width:1000px)');
     const matchDownSm = useMediaQuery('(max-width:700px)');
 
-    const { email, displayName } = useUser();
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const contextRef = useRef<CanvasRenderingContext2D | null>(null);
     const [lineWidth, setLineWidth] = useState(1);
@@ -50,20 +44,9 @@ function Paint({ imageId }: Props) {
     const [prevMouseX, setPrevMouseX] = useState(0);
     const [prevMouseY, setPrevMouseY] = useState(0);
     const [snapshot, setSnapshot] = useState<ImageData | null>(null);
-    const [imageURL, setImageURL] = useState('');
 
     const storage = getStorage();
-    const { imagesData } = useFetchImages();
-
-    useEffect(() => {
-        if (imageId) {
-            const getImageUrl = async () => {
-                const result = await getDownloadURL(ref(storage, `/images/${imageId}`));
-                setImageURL(result);
-            };
-            getImageUrl();
-        }
-    }, [imageId]);
+    const { name, image, id, email, documentId } = useAppSelector((state) => state.image);
 
     useEffect(() => {
         if (canvasRef.current) {
@@ -71,9 +54,9 @@ function Paint({ imageId }: Props) {
             canvasRef.current.height = canvasRef.current.offsetHeight;
             const context = canvasRef.current.getContext('2d', { willReadFrequently: true });
             contextRef.current = context;
-            setDefaultCanvasBackground(imageURL);
+            setDefaultCanvasBackground(image);
         }
-    }, [imageURL]);
+    }, [image]);
 
     const startDrawing = ({ nativeEvent }: { nativeEvent: MouseEvent }) => {
         const { offsetX, offsetY } = nativeEvent;
@@ -133,7 +116,7 @@ function Paint({ imageId }: Props) {
         canvasRef.current && contextRef.current?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     };
 
-    const setDefaultCanvasBackground = (imageURL: string) => {
+    const setDefaultCanvasBackground = (imageURL: string | null) => {
         if (contextRef.current && canvasRef.current && imageURL) {
             const img = new Image();
             img.crossOrigin = 'anonymous';
@@ -164,18 +147,14 @@ function Paint({ imageId }: Props) {
 
     // Save func
     const saveImage = async () => {
-        if (imageURL) {
-            const testDocumentId = imagesData?.filter((el) => el.id === imageId)[0].documentId;
-            const storageRef = ref(storage, `/images/${imageId}`);
+        if (image) {
+            const storageRef = ref(storage, `/images/${id}`);
             await uploadString(storageRef, img!, 'data_url').then(() => {
                 uploadSuccessful();
             });
             const downloadURL = await getDownloadURL(storageRef);
-            const imageRef = doc(db, 'users', testDocumentId);
+            const imageRef = doc(db, 'users', documentId);
             const uploading = await updateDoc(imageRef, {
-                id: imageId,
-                name: displayName,
-                email: email,
                 image: downloadURL,
             });
 
@@ -189,7 +168,7 @@ function Paint({ imageId }: Props) {
             const downloadURL = await getDownloadURL(storageRef);
             const uploading = await addDoc(collection(db, 'users'), {
                 id: newImageId,
-                name: displayName,
+                name: name,
                 email: email,
                 image: downloadURL,
             });

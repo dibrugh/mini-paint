@@ -7,11 +7,15 @@ import { Link } from 'react-router-dom';
 import { ModalWindow } from '../../../shared/ui';
 import { handleDelete } from '../../../features';
 import { useUser } from '../../../app/store/useUser';
+import { useAppDispatch } from '../../../app/store/redux-hooks';
+import { setImage } from '../../../features/ImagesCRUD/model/imageSlice';
 
 const ImageCard = ({ cardData }: DocumentData) => {
-    const { id, name, image, documentId } = cardData;
-    const { email, displayName } = useUser();
+    const { id, name, email, image, documentId } = cardData;
+    const { displayName } = useUser();
     const [open, setOpen] = useState(false);
+
+    const dispatch = useAppDispatch();
 
     const handleOpen = () => {
         setOpen(true);
@@ -20,6 +24,10 @@ const ImageCard = ({ cardData }: DocumentData) => {
     const handleDeleteImage = (event: React.MouseEvent<SVGSVGElement, MouseEvent>, id: string, documentId: string) => {
         handleDelete(id, documentId);
         event.stopPropagation();
+    };
+
+    const handleEditImage = () => {
+        dispatch(setImage(cardData));
     };
 
     const renderEditAndDeleteIcons = () => {
@@ -36,7 +44,7 @@ const ImageCard = ({ cardData }: DocumentData) => {
                     }}
                 >
                     <Link to={`/editor/${id}`} style={{ color: 'rgba(0, 0, 0, 0.87)' }}>
-                        <EditIcon />
+                        <EditIcon onClick={handleEditImage} />
                     </Link>
                     <DeleteIcon
                         onClick={(event) => {
