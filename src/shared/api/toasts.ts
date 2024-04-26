@@ -2,7 +2,7 @@ import { toast } from 'react-toastify';
 
 export const loginError = () => {
     toast.error('Something went wrong... Try again!', {
-        position: 'top-left',
+        position: 'top-right',
         autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -15,7 +15,7 @@ export const loginError = () => {
 
 export const uploadSuccessful = () => {
     toast.success('Succesfull upload', {
-        position: 'top-left',
+        position: 'top-right',
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,

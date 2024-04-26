@@ -3,9 +3,9 @@ import { signOutUser } from './Auth/lib/SignOut';
 import { createUser } from './Auth/lib/SignUp';
 import { userStateListener } from './Auth/lib/userStateListener';
 import { UseFilterByUsers } from './FilterByUser/FilterByUser';
-import { useFetchImages } from './ImagesCRUD/lib/useFetchImages';
-import { handleDelete } from './ImagesCRUD/lib/deleteImage';
-import { saveImage } from './ImagesCRUD/lib/saveImage';
+import { useFetchImages } from '../widgets/ImageCardList/model/useFetchImages';
+import { handleDelete } from './DeleteImage/lib/deleteImage';
+import { saveImage } from './SaveImage/lib/saveImage';
 
 export {
     signInUser as signIn,

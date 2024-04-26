@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './reduxHooks';
-import { removeUser, setUser, setLoading } from '../../features/Auth/model/userSlice';
+import { removeUser, setUser, setLoading } from '../../widgets/SignIn/model/userSlice';
 import { userStateListener } from '../../features';
 
 export const useUser = () => {

@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { updateProfile } from 'firebase/auth';
 import { auth } from '../../../shared/config/firebaseConfig';
 
-import { setUser } from '../../../features/Auth/model/userSlice';
+import { setUser } from '../../SignIn/model/userSlice';
 import { useAppDispatch } from '../../../shared/model/reduxHooks';
 
 const signUpSchema = yup.object().shape({

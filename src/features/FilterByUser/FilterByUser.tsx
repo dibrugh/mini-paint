@@ -8,5 +8,5 @@ export const UseFilterByUsers = () => {
         value: el,
     }));
 
-    return { usersList, usersData };
+    return { usersData };
 };

@@ -1,8 +1,8 @@
 import { doc, updateDoc, addDoc, collection } from 'firebase/firestore';
 import { uploadString, getDownloadURL, ref, getStorage } from 'firebase/storage';
-import { uploadSuccessful } from '../../../shared/api';
 import { db } from '../../../shared/config/firebaseConfig';
 import { v4 as uuidv4 } from 'uuid';
+import { uploadSuccessful } from '../../../shared/api';
 
 type saveImageParams = {
     displayName: string | null;

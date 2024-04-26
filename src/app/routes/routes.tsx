@@ -1,51 +1,20 @@
-import { createBrowserRouter } from 'react-router-dom';
-import { Editor, Error, Main, SignIn, SignUp } from '../../pages';
-import { PrivateRoute } from '../../shared/router/PrivateRoute';
+import { Outlet, createBrowserRouter } from 'react-router-dom';
+import { Error } from '../../pages';
+import { AuthGuard } from '../../shared/router/AuthGuard';
+import { privateRoutes } from './privateRoutes';
+import { publicRoutes } from './publicRoutes';
 
 export const router = createBrowserRouter([
     {
         path: '/',
-        element: (
-            <PrivateRoute>
-                <Main />
-            </PrivateRoute>
-        ),
-        errorElement: <Error />,
-    },
-    {
-        path: '/feed',
-        element: (
-            <PrivateRoute>
-                <Main />
-            </PrivateRoute>
-        ),
-        errorElement: <Error />,
-    },
-    {
-        path: '/editor/*',
-        element: (
-            <PrivateRoute>
-                <Editor />
-            </PrivateRoute>
-        ),
+        element: <Outlet />,
         errorElement: <Error />,
         children: [
+            ...publicRoutes,
             {
-                path: ':imageId',
-                element: <Editor />,
+                element: <AuthGuard />,
+                children: [...privateRoutes],
             },
         ],
-    },
-    {
-        path: '/sign-in',
-        element: (
-            <PrivateRoute>
-                <SignIn />
-            </PrivateRoute>
-        ),
-    },
-    {
-        path: '/sign-up',
-        element: <SignUp />,
     },
 ]);

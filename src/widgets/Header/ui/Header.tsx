@@ -8,7 +8,7 @@ import { signOut } from '../../../features';
 import { useNavigate } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 
-import { removeUser } from '../../../features/Auth/model/userSlice';
+import { removeUser } from '../../SignIn/model/userSlice';
 import { useAppDispatch } from '../../../shared/model/reduxHooks';
 
 export default function Header() {

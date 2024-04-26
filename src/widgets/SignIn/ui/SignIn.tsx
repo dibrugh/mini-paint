@@ -11,10 +11,10 @@ import { signIn } from '../../../features';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { loginError } from '../../../shared/api';
 
-import { setUser } from '../../../features/Auth/model/userSlice';
+import { setUser } from '../model/userSlice';
 import { useAppDispatch } from '../../../shared/model/reduxHooks';
+import { loginError } from '../../../shared/api';
 
 const signInSchema = yup.object().shape({
     email: yup.string().email().required('Email is required'),
@@ -59,7 +59,6 @@ const SignIn = () => {
         }
     };
 
-    // Можно вынести в InputAdornments
     const [showPassword, setShowPassword] = useState(false);
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
