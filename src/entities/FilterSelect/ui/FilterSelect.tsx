@@ -1,5 +1,5 @@
 import Select, { StylesConfig, OnChangeValue } from 'react-select';
-import { UseFilterByUsers } from '../../../features';
+import { useFilterByUsers } from '../../../features';
 
 type OptionType = { label: string; value: string };
 
@@ -8,7 +8,7 @@ type Props = {
 };
 
 const FilterSelect = ({ setSelectedUsers }: Props) => {
-    const { usersData } = UseFilterByUsers();
+    const { usersData } = useFilterByUsers();
 
     const handleChange = (selectedOption: OnChangeValue<OptionType, true>) => {
         const options = selectedOption as OptionType[];
