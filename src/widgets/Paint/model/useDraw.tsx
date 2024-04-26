@@ -26,11 +26,16 @@ export default function useDraw({
 
     const startDrawing = ({ nativeEvent }: { nativeEvent: MouseEvent }) => {
         const { offsetX, offsetY } = nativeEvent;
-        setPrevMouseX(offsetX);
-        setPrevMouseY(offsetY);
+        // Adjust the drawing coordinates based on the screen resolution
+        const scaleX = canvasRef.current!.width / canvasRef.current!.offsetWidth;
+        const scaleY = canvasRef.current!.height / canvasRef.current!.offsetHeight;
+        const adjustedOffsetX = offsetX * scaleX;
+        const adjustedOffsetY = offsetY * scaleY;
+        setPrevMouseX(adjustedOffsetX);
+        setPrevMouseY(adjustedOffsetY);
         if (contextRef.current && canvasRef.current) {
             contextRef.current.beginPath();
-            contextRef.current.moveTo(offsetX, offsetY);
+            contextRef.current.moveTo(adjustedOffsetX, adjustedOffsetY);
             contextRef.current.lineWidth = lineWidth;
             contextRef.current.strokeStyle = selectedColor;
             contextRef.current.fillStyle = selectedColor;
@@ -48,27 +53,48 @@ export default function useDraw({
         }
         contextRef.current?.putImageData(snapshot as ImageData, 0, 0);
         const { offsetX, offsetY } = nativeEvent;
+
+        // Adjust the drawing coordinates based on the screen resolution
+        const scaleX = canvasRef.current!.width / canvasRef.current!.offsetWidth;
+        const scaleY = canvasRef.current!.height / canvasRef.current!.offsetHeight;
+        const adjustedOffsetX = offsetX * scaleX;
+        const adjustedOffsetY = offsetY * scaleY;
+
         switch (selectedTool) {
             case 'brush':
-                contextRef.current?.lineTo(offsetX, offsetY);
+                contextRef.current?.lineTo(adjustedOffsetX, adjustedOffsetY);
                 contextRef.current?.stroke();
                 break;
             case 'line':
                 contextRef.current?.beginPath();
                 contextRef.current?.moveTo(prevMouseX, prevMouseY);
-                contextRef.current?.lineTo(offsetX, offsetY);
+                contextRef.current?.lineTo(adjustedOffsetX, adjustedOffsetY);
                 contextRef.current?.closePath();
                 contextRef.current?.stroke();
                 break;
             case 'rectangle': {
                 if (!figureIsFilled) {
-                    contextRef.current?.strokeRect(offsetX, offsetY, prevMouseX - offsetX, prevMouseY - offsetY);
-                } else contextRef.current?.fillRect(offsetX, offsetY, prevMouseX - offsetX, prevMouseY - offsetY);
+                    contextRef.current?.strokeRect(
+                        adjustedOffsetX,
+                        adjustedOffsetY,
+                        prevMouseX - adjustedOffsetX,
+                        prevMouseY - adjustedOffsetY
+                    );
+                } else {
+                    contextRef.current?.fillRect(
+                        adjustedOffsetX,
+                        adjustedOffsetY,
+                        prevMouseX - adjustedOffsetX,
+                        prevMouseY - adjustedOffsetY
+                    );
+                }
                 break;
             }
             case 'circle': {
                 contextRef.current?.beginPath();
-                const radius = Math.sqrt(Math.pow(prevMouseX - offsetX, 2) + Math.pow(prevMouseX - offsetX, 2));
+                const radius = Math.sqrt(
+                    Math.pow(prevMouseX - adjustedOffsetX, 2) + Math.pow(prevMouseY - adjustedOffsetY, 2)
+                );
                 contextRef.current?.arc(prevMouseX, prevMouseY, radius, 0, 2 * Math.PI);
                 figureIsFilled ? contextRef.current?.fill() : contextRef.current?.stroke();
                 break;

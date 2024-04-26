@@ -40,7 +40,11 @@ export default function ToolBar({ selectedTool, figureIsFilled, setSelectedTool,
             sx={matchDownSm ? { display: 'flex', alignItems: 'center' } : { display: 'block' }}
             flexDirection={matchDownSm ? 'row' : 'column'}
         >
-            <Typography variant="h5" component="h5" sx={{ marginBottom: '15px' }}>
+            <Typography
+                variant="h5"
+                component="h5"
+                sx={matchDownSm ? { display: 'none' } : { display: 'block', marginBottom: '15px' }}
+            >
                 Shapes
             </Typography>
             <List sx={matchDownSm ? { display: 'flex', alignItems: 'center' } : { display: 'block' }}>

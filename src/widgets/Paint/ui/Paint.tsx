@@ -63,7 +63,11 @@ function Paint() {
                         sx={matchDownSm ? { display: 'flex', alignItems: 'center' } : null}
                         flexDirection={matchDownSm ? 'row' : 'column'}
                     >
-                        <Typography variant="h5" component="h5" sx={{ marginBottom: '15px' }}>
+                        <Typography
+                            variant="h5"
+                            component="h5"
+                            sx={matchDownSm ? { display: 'none' } : { display: 'block', marginBottom: '15px' }}
+                        >
                             Options
                         </Typography>
                         <List sx={matchDownSm ? { display: 'flex', flexWrap: 'wrap' } : { display: 'block' }}>
