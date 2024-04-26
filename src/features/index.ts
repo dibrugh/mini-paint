@@ -1,8 +1,8 @@
-import { signInUser } from './Auth/lib/SignIn';
-import { signOutUser } from './Auth/lib/SignOut';
-import { createUser } from './Auth/lib/SignUp';
-import { userStateListener } from './Auth/lib/userStateListener';
-import { UseFilterByUsers } from './FilterByUser/FilterByUser';
+import { signInUser } from './Auth/SignIn/lib/SignIn';
+import { signOutUser } from './Auth/SignOut/lib/SignOut';
+import { createUser } from './Auth/SignUp/lib/SignUp';
+import { userStateListener } from './Auth/StateListener/lib/userStateListener';
+import { useFilterByUsers } from './FilterByUser/model/useFilterByUsers';
 import { useFetchImages } from '../widgets/ImageCardList/model/useFetchImages';
 import { handleDelete } from './DeleteImage/lib/deleteImage';
 import { saveImage } from './SaveImage/lib/saveImage';
@@ -14,6 +14,6 @@ export {
     userStateListener,
     saveImage,
     useFetchImages,
-    UseFilterByUsers,
+    useFilterByUsers,
     handleDelete,
 };

@@ -1,6 +1,6 @@
-import { useFetchImages } from '../../features/index';
+import { useFetchImages } from '../../index';
 
-export const UseFilterByUsers = () => {
+export const useFilterByUsers = () => {
     const { imagesData } = useFetchImages();
     const usersList = Array.from(new Set(imagesData?.map((el) => el.name)));
     const usersData = usersList.map((el) => ({
