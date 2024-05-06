@@ -55,6 +55,21 @@ function Paint() {
         name: string | null
     ) => dispatch(setImage({ documentId, email, id, image, name }));
 
+    const [loading, setLoading] = useState(false);
+
+    const handleImageSave = () => {
+        setLoading(true);
+        saveImage({
+            displayName,
+            email,
+            image,
+            imageDataURL,
+            id,
+            documentId,
+            dispatchImageData,
+        }).then(() => setLoading(false));
+    };
+
     return (
         <Container sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
             <Grid container spacing={2} flexDirection={matchDownSm ? 'column' : 'row'}>
@@ -118,20 +133,7 @@ function Paint() {
                         <Button variant="outlined" onClick={clearCanvas}>
                             Clear canvas
                         </Button>
-                        <Button
-                            variant="contained"
-                            onClick={() =>
-                                saveImage({
-                                    displayName,
-                                    email,
-                                    image,
-                                    imageDataURL,
-                                    id,
-                                    documentId,
-                                    dispatchImageData,
-                                })
-                            }
-                        >
+                        <Button variant="contained" disabled={loading} onClick={handleImageSave}>
                             Save
                         </Button>
                     </Box>
