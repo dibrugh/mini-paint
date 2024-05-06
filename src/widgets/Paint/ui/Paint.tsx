@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { useAppSelector } from '../../../shared/model/reduxHooks';
+import { useAppDispatch, useAppSelector } from '../../../shared/model/reduxHooks';
 import ToolBar from '../../../entities/ToolBar/ui/ToolBar';
 import { saveImage } from '../../../features';
 import { HexColorPicker } from 'react-colorful';
@@ -9,6 +9,7 @@ import { Box, Button, Container, Grid, List, ListItem, Slider, Typography, useMe
 import 'react-toastify/dist/ReactToastify.css';
 import useDraw from '../model/useDraw';
 import Canvas from '../../../entities/Canvas/ui/Canvas';
+import { setImage } from '../../../entities/ImageCard/model/imageSlice';
 
 type selectedTool = 'brush' | 'rectangle' | 'circle' | 'line';
 
@@ -44,6 +45,15 @@ function Paint() {
     };
 
     const imageDataURL = canvasRef.current?.toDataURL();
+
+    const dispatch = useAppDispatch();
+    const dispatchImageData = (
+        documentId: string,
+        email: string | null,
+        id: string,
+        image: string,
+        name: string | null
+    ) => dispatch(setImage({ documentId, email, id, image, name }));
 
     return (
         <Container sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
@@ -110,7 +120,17 @@ function Paint() {
                         </Button>
                         <Button
                             variant="contained"
-                            onClick={() => saveImage({ displayName, email, image, imageDataURL, id, documentId })}
+                            onClick={() =>
+                                saveImage({
+                                    displayName,
+                                    email,
+                                    image,
+                                    imageDataURL,
+                                    id,
+                                    documentId,
+                                    dispatchImageData,
+                                })
+                            }
                         >
                             Save
                         </Button>

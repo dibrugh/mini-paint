@@ -11,9 +11,27 @@ type saveImageParams = {
     id: string | null;
     email: string | null;
     documentId: string | null;
+    dispatchImageData: (
+        documentId: string,
+        email: string | null,
+        id: string,
+        image: string,
+        name: string | null
+    ) => {
+        payload: unknown;
+        type: 'image/setImage';
+    };
 };
 
-export const saveImage = async ({ displayName, email, image, imageDataURL, id, documentId }: saveImageParams) => {
+export const saveImage = async ({
+    displayName,
+    email,
+    image,
+    imageDataURL,
+    id,
+    documentId,
+    dispatchImageData,
+}: saveImageParams) => {
     const storage = getStorage();
     if (image) {
         const storageRef = ref(storage, `/images/${id}`);
@@ -39,7 +57,6 @@ export const saveImage = async ({ displayName, email, image, imageDataURL, id, d
             email: email,
             image: downloadURL,
         });
-
-        console.log('Uploading....', uploading);
+        dispatchImageData(uploading.id, email, newImageId, downloadURL, displayName);
     }
 };

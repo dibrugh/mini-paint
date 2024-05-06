@@ -10,6 +10,7 @@ import { getAuth } from 'firebase/auth';
 
 import { removeUser } from '../../SignIn/model/userSlice';
 import { useAppDispatch } from '../../../shared/model/reduxHooks';
+import { setImage } from '../../../entities/ImageCard/model/imageSlice';
 
 export default function Header() {
     const navigate = useNavigate();
@@ -22,6 +23,7 @@ export default function Header() {
 
     const redirectToFeed = () => {
         navigate('/feed');
+        dispatch(setImage({ documentId: null, email: null, id: null, image: null, name: null }));
     };
 
     return (
