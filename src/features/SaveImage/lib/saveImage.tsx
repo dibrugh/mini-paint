@@ -35,9 +35,10 @@ export const saveImage = async ({
     const storage = getStorage();
     if (image) {
         const storageRef = ref(storage, `/images/${id}`);
-        await uploadString(storageRef, imageDataURL!, 'data_url').then(() => {
-            uploadSuccessful();
-        });
+        imageDataURL &&
+            (await uploadString(storageRef, imageDataURL, 'data_url').then(() => {
+                uploadSuccessful();
+            }));
         const downloadURL = await getDownloadURL(storageRef);
         const imageRef = doc(db, 'users', documentId as string);
         const uploading = await updateDoc(imageRef, {
